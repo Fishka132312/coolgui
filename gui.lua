@@ -34,10 +34,29 @@ Tab:AddButton({
   	end    
 })
 
+-------------------------My Script---------------------------
+
+local Tab = Window:MakeTab({
+	Name = "My Script",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+Tab:AddButton({
+	Name = "MeowlSploit",
+	Callback = function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/MeowlSploit/refs/heads/main/xJ9v2PzL.lua'))()
+  	end    
+})
+
+local Section = Tab:AddSection({
+	Name = "Supported Games: Petsim99, Evade, BENPCORDIE "
+})
+
 -------------------------Download Any Game---------------------------
 
 local Tab = Window:MakeTab({
-	Name = "Download Any Game",
+	Name = "Download",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
@@ -47,7 +66,7 @@ local Section = Tab:AddSection({
 })
 
 Tab:AddButton({
-	Name = "Infinite Yield",
+	Name = "Download current game",
 	Callback = function()
     local Params = {
  RepoURL = "https://raw.githubusercontent.com/luau/UniversalSynSaveInstance/main/",
