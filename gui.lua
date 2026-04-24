@@ -4,7 +4,7 @@ local Window = OrionLib:MakeWindow({Name = "MeowSploit", HidePremium = false, Sa
 -------------------------Shader---------------------------
 
 local Tab = Window:MakeTab({
-	Name = "Shader",
+	Name = "Shaders",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
@@ -14,9 +14,9 @@ local Section = Tab:AddSection({
 })
 
 Tab:AddButton({
-	Name = "Shader",
+	Name = "Shaders",
 	Callback = function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/coolgui/refs/heads/main/Things/shader.lua'))()  
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/coolgui/refs/heads/main/Things/shaders.lua'))()  
   	end    
 })
 
@@ -35,17 +35,16 @@ local Tab = Window:MakeTab({
 	PremiumOnly = false
 })
 
+local Section = Tab:AddSection({
+	Name = "Supported Games: Petsim99, Evade, BENPCORDIE "
+})
+
 Tab:AddButton({
 	Name = "MeowlSploit",
 	Callback = function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/MeowlSploit/refs/heads/main/xJ9v2PzL.lua'))()
   	end    
 })
-
-local Section = Tab:AddSection({
-	Name = "Supported Games: Petsim99, Evade, BENPCORDIE "
-})
-
 -------------------------Download Any Game---------------------------
 
 local Tab = Window:MakeTab({
