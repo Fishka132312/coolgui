@@ -16,14 +16,7 @@ local Section = Tab:AddSection({
 Tab:AddButton({
 	Name = "Shader 1",
 	Callback = function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/coolgui/refs/heads/main/Things/shader1.lua'))()  
-  	end    
-})
-
-Tab:AddButton({
-	Name = "Shader 2",
-	Callback = function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/coolgui/refs/heads/main/Things/shader2.lua'))()  
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/coolgui/refs/heads/main/Things/shader.lua'))()  
   	end    
 })
 
