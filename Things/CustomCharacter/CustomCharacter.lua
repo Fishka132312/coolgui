@@ -184,6 +184,13 @@ _G.Skins = {
     ["Cool Rich Girl"] = {
         Headless = false,
         Korblox = false,
+        R6BodyMeshes = {
+        ["LeftArm"]  = { MeshId = 83001137 },
+        ["RightArm"] = { MeshId = 83001181 },
+        ["LeftLeg"]  = { MeshId = 81487640 },
+        ["RightLeg"] = { MeshId = 81487710 },
+        ["Torso"]    = { MeshId = 82987757 },
+    },
         BodyColors = {
             HeadColor3 = Color3.fromRGB(204, 142, 105),
             TorsoColor3 = Color3.fromRGB(204, 142, 105),
@@ -388,20 +395,46 @@ _G.ApplySkin = function(skinName)
     if data.Shirt then Instance.new("Shirt", char).ShirtTemplate = data.Shirt end
     if data.Pants then Instance.new("Pants", char).PantsTemplate = data.Pants end
 
-    -- 3. Настройка головы (Headless или Custom)
+    -- 3. Настройка тела R6 (CharacterMesh)
+    if data.R6BodyMeshes then
+        local bodyPartMap = {
+            ["Torso"]    = Enum.BodyPart.Torso,
+            ["LeftArm"]  = Enum.BodyPart.LeftArm,
+            ["RightArm"] = Enum.BodyPart.RightArm,
+            ["LeftLeg"]  = Enum.BodyPart.LeftLeg,
+            ["RightLeg"] = Enum.BodyPart.RightLeg,
+            ["Head"]     = Enum.BodyPart.Head
+        }
+
+        for partName, meshData in pairs(data.R6BodyMeshes) do
+            local targetEnum = bodyPartMap[partName]
+            if targetEnum then
+                local cm = Instance.new("CharacterMesh")
+                cm.MeshId = meshData.MeshId
+                cm.BodyPart = targetEnum
+                if meshData.BaseTextureId then cm.BaseTextureId = meshData.BaseTextureId end
+                cm.Parent = char
+            end
+        end
+    end
+
+    -- 4. Настройка головы (Headless или Custom)
     if char:FindFirstChild("Head") then
         local head = char.Head
         if data.Headless then
+            -- Стандартный меш для невидимой головы (Headless)
             local m = Instance.new("SpecialMesh", head)
             m.MeshId = "http://www.roblox.com/asset/?id=134079402"
             m.TextureId = "http://www.roblox.com/asset/?id=133940918"
+            m.Scale = Vector3.new(0, 0, 0) -- На всякий случай уменьшаем в 0
         elseif data.CustomHead then
+            -- Кастомная голова (например, от других наборов)
             local m = Instance.new("SpecialMesh", head)
             m.Name = "Mesh"
             m.MeshId = data.CustomHead.MeshId
             m.TextureId = data.CustomHead.TextureId or ""
-            m.Scale = Vector3.new(1, 1, 1)
-            m.Offset = Vector3.new(0, 0, 0)
+            m.Scale = data.CustomHead.Scale or Vector3.new(1, 1, 1)
+            m.Offset = data.CustomHead.Offset or Vector3.new(0, 0, 0)
         end
     end
 
