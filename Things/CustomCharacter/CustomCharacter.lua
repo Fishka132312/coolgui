@@ -232,24 +232,38 @@ _G.ApplySkin = function(skinName)
     end
 
     -- Аксессуары
-    if data.Accessories then
+   if data.Accessories then
         for _, accData in ipairs(data.Accessories) do
             local acc = Instance.new("Accessory")
             acc.Name = accData.Name
-            local handle = Instance.new("Part", acc)
+            
+            local handle = Instance.new("Part")
             handle.Name = "Handle"
-            handle.Size = Vector3.new(1,1,1)
+            handle.Size = Vector3.new(1, 1, 1)
             handle.CanCollide = false
+            handle.Parent = acc
             
             local mesh = Instance.new("SpecialMesh", handle)
             mesh.MeshId = accData.MeshId
             mesh.TextureId = accData.TextureId
+            -- Если хочешь, чтобы аксессуар можно было масштабировать, добавь тут:
+            mesh.Scale = accData.Scale or Vector3.new(1, 1, 1)
             
             local weld = Instance.new("Weld", handle)
+            weld.Name = "AccessoryWeld"
             weld.Part0 = handle
             weld.Part1 = char:FindFirstChild("Head")
-            weld.C0 = accData.C0
-            weld.C1 = accData.C1
+            
+            -- ПРОВЕРКА: Если данные в базе — это просто список чисел, превращаем их в CFrame
+            local function toCFrame(data)
+                if typeof(data) == "CFrame" then return data end
+                if typeof(data) == "table" then return CFrame.new(unpack(data)) end
+                -- Если это строка или длинный список аргументов (через запятую в коде)
+                return data 
+            end
+
+            weld.C0 = toCFrame(accData.C0)
+            weld.C1 = toCFrame(accData.C1)
             
             acc.Parent = char
         end
