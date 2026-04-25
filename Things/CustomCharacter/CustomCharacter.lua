@@ -272,6 +272,7 @@ _G.ApplySkin = function(skinName)
         mesh.BodyPart = Enum.BodyPart.RightLeg
         mesh.MeshId = 101851696
         mesh.BaseTextureId = 0 
+        mesh.OverlayTextureId = 101851254
     end
 
     if data.Accessories then
