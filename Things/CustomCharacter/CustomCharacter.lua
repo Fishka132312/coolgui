@@ -188,6 +188,10 @@ _G.Skins = {
             MeshId = "rbxassetid://115355460861394",
             TextureId = "rbxassetid://76689256681394",
         },
+        CustomHeadR15 = {
+        MeshId = "rbxassetid://105675926705465",
+        TextureId = "rbxassetid://76689256681394",
+    },
         R6BodyMeshes = {
         ["LeftArm"]  = { MeshId = 83001137 },
         ["RightArm"] = { MeshId = 83001181 },
@@ -470,42 +474,52 @@ _G.ApplySkin = function(skinName)
     -- 6. Настройка головы (Headless или Custom)
     if char:FindFirstChild("Head") then
         local head = char.Head
-        
-        -- Убираем лицо, если активен скин
         local face = head:FindFirstChild("face")
+        
+        -- Скрываем стандартное лицо (делаем невидимым)
         if face then face.Transparency = 1 end
 
         if data.Headless then
+            -- ЛОГИКА HEADLESS
             if isR15 then
-                -- Для R15 просто делаем MeshPart прозрачным (Headless)
                 head.Transparency = 1
-                -- Если есть вложенные меши или детали, их тоже скрываем
                 for _, child in ipairs(head:GetChildren()) do
                     if child:IsA("Decal") or child:IsA("BasePart") then child.Transparency = 1 end
                 end
             else
-                -- Для R6 используем классический метод со скейлом 0
                 local m = Instance.new("SpecialMesh", head)
                 m.Name = "HeadlessMesh"
                 m.MeshId = "http://www.roblox.com/asset/?id=134079402"
                 m.TextureId = "http://www.roblox.com/asset/?id=133940918"
                 m.Scale = Vector3.new(0, 0, 0)
             end
+        elseif data.CustomHeadR15 and isR15 then
+            -- ЛОГИКА CUSTOM HEAD ДЛЯ R15
+            -- Вырезаем только цифры из ID, так как HumanoidDescription не ест префиксы
+            local meshId = tonumber(tostring(data.CustomHeadR15.MeshId):match("%d+"))
+            
+            local hd = humanoid:GetAppliedDescription() or Instance.new("HumanoidDescription")
+            hd.Head = meshId or 0
+            
+            -- Применяем меш головы через описание гуманоида
+            pcall(function()
+                humanoid:ApplyDescription(hd)
+            end)
+            
+            -- Настройка текстуры через лицо (часто используется в R15 кастомных головах)
+            if data.CustomHeadR15.TextureId and face then
+                local texId = tostring(data.CustomHeadR15.TextureId):match("%d+")
+                face.Texture = "rbxassetid://" .. texId
+                face.Transparency = 0
+            end
         elseif data.CustomHead then
+            -- ЛОГИКА CUSTOM HEAD ДЛЯ R6 (или если R15 не настроен)
             if isR15 and head:IsA("MeshPart") then
-                -- Логика для R15: меняем ID самой детали головы
+                -- Фолбэк для R15, если нет отдельного конфига (попытка прямой замены)
                 head.MeshId = data.CustomHead.MeshId
                 head.TextureID = data.CustomHead.TextureId or ""
-                -- Если нужно менять размер в R15, лучше использовать HumanoidDescription, 
-                -- но в простом варианте можно попробовать скейлить саму деталь:
-                if data.CustomHead.Scale then
-                    -- В R15 MeshPart.Size заблокирован системой, поэтому масштаб головы 
-                    -- обычно меняется через свойства Humanoid (HeadScale)
-                    local hs = humanoid:FindFirstChild("HeadScale")
-                    if hs then hs.Value = data.CustomHead.Scale.X end -- берем X как среднее
-                end
             else
-                -- Логика для R6: ставим SpecialMesh
+                -- Классический R6 SpecialMesh
                 local m = head:FindFirstChildOfClass("SpecialMesh") or Instance.new("SpecialMesh", head)
                 m.Name = "Mesh"
                 m.MeshId = data.CustomHead.MeshId
