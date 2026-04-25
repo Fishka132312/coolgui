@@ -7,30 +7,6 @@ end
 
 _G.OriginalAppearance = nil
 _G.Skins = {
-    ["Skin1test"] = {
-        Headless = false,
-        CustomHead = {
-            MeshId = "rbxassetid://129985527653392",
-            TextureId = "rbxassetid://140448396622170",
-        },
-        Korblox = true,
-        BodyColors = {
-            HeadColor3 = Color3.fromRGB(253, 255, 218),
-            TorsoColor3 = Color3.fromRGB(253, 255, 218),
-        },
-        Shirt = "http://www.roblox.com/asset/?id=130279969081496",
-        Pants = "http://www.roblox.com/asset/?id=101378827790861",
-        Accessories = {
-            {
-                Name = "CoolHat",
-                MeshId = "rbxassetid://79222906659871",
-                TextureId = "rbxassetid://140448396622170",
-                ParentPart = "Head",
-                C0 = CFrame.new(-0.286330223, 0.0514807701, 0.175481796, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
-            }
-        }
-    },
     ["Cool Black Eboy"] = {
         Headless = true,
         Korblox = true,
@@ -41,7 +17,6 @@ _G.Skins = {
             LeftLegColor3 = Color3.fromRGB(253, 255, 218),
             RightArmColor3 = Color3.fromRGB(253, 255, 218),
             RightLegColor3 = Color3.fromRGB(253, 255, 218),
-            
         },
         Shirt = "http://www.roblox.com/asset/?id=9195449962",
         Pants = "http://www.roblox.com/asset/?id=6930028736",
@@ -133,10 +108,11 @@ _G.Skins = {
                 ParentPart = "Head",
                 C0 = CFrame.new(-0.00323867775, 0.193525791, 0.186584473, -1, 0, 0, 0, 1, 0, 0, 0, -1),
                 C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
-            },
+            }
         }
     },
-    ["Rick Black/White eboy"] = {
+
+    ["Rich Black/White eboy"] = {
         Headless = false,
         Korblox = false,
         CustomHead = {
@@ -150,7 +126,6 @@ _G.Skins = {
             LeftLegColor3 = Color3.fromRGB(253, 255, 218),
             RightArmColor3 = Color3.fromRGB(253, 255, 218),
             RightLegColor3 = Color3.fromRGB(253, 255, 218),
-            
         },
         Shirt = "http://www.roblox.com/asset/?id=9195449962",
         Pants = "http://www.roblox.com/asset/?id=6930028736",
@@ -202,7 +177,88 @@ _G.Skins = {
                 ParentPart = "Head",
                 C0 = CFrame.new(8.65838956e-09, -0.243375838, -0.265762806, 1, -0, 0, 0, 0.966936111, 0.2550188, -0, -0.2550188, 0.966936111),
                 C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            }
+        }
+    },
+
+    ["Cool Rich Girl"] = {
+        Headless = false,
+        Korblox = false,
+        BodyColors = {
+            HeadColor3 = Color3.fromRGB(204, 142, 105),
+            TorsoColor3 = Color3.fromRGB(204, 142, 105),
+            LeftArmColor3 = Color3.fromRGB(204, 142, 105),
+            LeftLegColor3 = Color3.fromRGB(204, 142, 105),
+            RightArmColor3 = Color3.fromRGB(204, 142, 105),
+            RightLegColor3 = Color3.fromRGB(204, 142, 105),
+        },
+        Shirt = "http://www.roblox.com/asset/?id=6472288557",
+        Pants = "http://www.roblox.com/asset/?id=6066432764",
+        Accessories = {
+            {
+                Name = "chicBowPursePink",
+                MeshId = "rbxassetid://6843422307",
+                TextureId = "rbxassetid://6843422345",
+                ParentPart = "Torso",
+                C0 = CFrame.new(0.387207031, 0.0957374573, -0.765258789, 0, 0, -1, 0, 1, 0, 1, 0, 0),
+                C1 = CFrame.new(0, 0, -0.5, 1, 0, 0, 0, 1, 0, 0, 0, 1)
             },
+            {
+                Name = "NewSideBangsCaramelAccessory",
+                MeshId = "rbxassetid://5945976587",
+                TextureId = "rbxassetid://6322812499",
+                ParentPart = "Head",
+                C0 = CFrame.new(-0.00221633911, -0.166851044, -0.286561489, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0, -0.600000024, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "BandageAccessory",
+                MeshId = "rbxassetid://5699721463",
+                TextureId = "http://www.roblox.com/asset/?id=5699711147",
+                ParentPart = "Head",
+                C0 = CFrame.new(-0.000275611877, -0.0262117386, 0.597229004, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "BubblyPigtails",
+                MeshId = "rbxassetid://6633403700",
+                TextureId = "rbxassetid://6632272463",
+                ParentPart = "Head",
+                C0 = CFrame.new(-4.4408921e-16, 1.22000003, -0.130999997, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "FluffyEarringsAccessory",
+                MeshId = "rbxassetid://4632062805",
+                TextureId = "rbxassetid://4632070627",
+                ParentPart = "Head",
+                C0 = CFrame.new(0, 0.900715947, -0.00371140987, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "PinkBaddieSunniesAccessory",
+                MeshId = "rbxassetid://5582632117",
+                TextureId = "http://www.roblox.com/asset/?id=5582639653",
+                ParentPart = "Head",
+                C0 = CFrame.new(0.00819158554, -0.0284600258, 0.298658371, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "PearlArmbandAccessory",
+                MeshId = "rbxassetid://6714866689",
+                TextureId = "http://www.roblox.com/asset/?id=6714855730",
+                ParentPart = "Left Arm",
+                C0 = CFrame.new(0.0630722046, 0.448396206, -0.0439186096, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "WomansPearl",
+                MeshId = "rbxassetid://6471990108",
+                TextureId = "http://www.roblox.com/asset/?id=6471995247",
+                ParentPart = "Torso",
+                C0 = CFrame.new(0.000244140625, 0.252067804, 0.156005859, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            }
         }
     }
 }
@@ -312,12 +368,15 @@ _G.ApplySkin = function(skinName)
     end
     
     _G.SaveOriginal()
-    
     _G.IsSkinActive = true
 
     local char = getChar()
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    local isR15 = humanoid and humanoid.RigType == Enum.HumanoidRigType.R15
+    
     clearCharacter()
 
+    -- 1. Настройка цветов тела
     local bc = Instance.new("BodyColors", char)
     if data.BodyColors then
         for prop, color in pairs(data.BodyColors) do
@@ -325,12 +384,13 @@ _G.ApplySkin = function(skinName)
         end
     end
 
+    -- 2. Настройка одежды
     if data.Shirt then Instance.new("Shirt", char).ShirtTemplate = data.Shirt end
     if data.Pants then Instance.new("Pants", char).PantsTemplate = data.Pants end
 
+    -- 3. Настройка головы (Headless или Custom)
     if char:FindFirstChild("Head") then
         local head = char.Head
-        
         if data.Headless then
             local m = Instance.new("SpecialMesh", head)
             m.MeshId = "http://www.roblox.com/asset/?id=134079402"
@@ -345,14 +405,7 @@ _G.ApplySkin = function(skinName)
         end
     end
 
-    if data.Korblox then
-        local mesh = Instance.new("CharacterMesh", char)
-        mesh.BodyPart = Enum.BodyPart.RightLeg
-        mesh.MeshId = 101851696
-        mesh.BaseTextureId = 0 
-        mesh.OverlayTextureId = 101851254
-    end
-
+    -- 4. Настройка аксессуаров
     if data.Accessories then
         local function toCFrame(cfData)
             if not cfData then return CFrame.new() end
@@ -377,6 +430,17 @@ _G.ApplySkin = function(skinName)
             mesh.Scale = accData.Scale or Vector3.new(1, 1, 1)
             
             local targetName = accData.ParentPart or "Head"
+            
+            -- Авто-адаптация имен частей тела под R15
+            if isR15 then
+                if targetName == "Torso" then targetName = "UpperTorso"
+                elseif targetName == "Left Arm" then targetName = "LeftUpperArm"
+                elseif targetName == "Right Arm" then targetName = "RightUpperArm"
+                elseif targetName == "Left Leg" then targetName = "LeftUpperLeg"
+                elseif targetName == "Right Leg" then targetName = "RightUpperLeg"
+                end
+            end
+
             local targetPart = char:FindFirstChild(targetName)
             
             if targetPart then
@@ -384,10 +448,8 @@ _G.ApplySkin = function(skinName)
                 weld.Name = "AccessoryWeld"
                 weld.Part0 = handle
                 weld.Part1 = targetPart
-                
                 weld.C0 = toCFrame(accData.C0)
                 weld.C1 = toCFrame(accData.C1)
-                
                 acc.Parent = char
             else
                 warn("Ошибка: Часть тела " .. tostring(targetName) .. " не найдена для " .. accData.Name)
