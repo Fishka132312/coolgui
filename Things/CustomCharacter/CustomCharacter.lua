@@ -222,6 +222,23 @@ local function clearCharacter()
     end
 end
 
+local function onCharacterAdded(newCharacter)
+    task.wait(1) 
+    
+    if _G.IsSkinActive and _G.ApplySkin then
+        if _G.CurrentSkinName and _G.CurrentSkinName ~= "None" then
+            print("Персонаж обновлен, переприменяю скин: " .. _G.CurrentSkinName)
+            _G.ApplySkin(_G.CurrentSkinName)
+        end
+    end
+end
+
+player.CharacterAdded:Connect(onCharacterAdded)
+
+if player.Character then
+    task.spawn(onCharacterAdded, player.Character)
+end
+
 _G.ApplySkin = function(skinName)
     if not skinName or skinName == "None" or skinName == "Загрузка..." or skinName == "" then 
         return 
