@@ -112,7 +112,7 @@ _G.Skins = {
             },
         }
     },
-    ["Rick Black/White eboy"] = {
+    ["Rich Black/White eboy"] = {
         Headless = false,
         Korblox = false,
         CustomHead = {
@@ -178,8 +178,9 @@ _G.Skins = {
                 ParentPart = "Head",
                 C0 = CFrame.new(8.65838956e-09, -0.243375838, -0.265762806, 1, -0, 0, 0, 0.966936111, 0.2550188, -0, -0.2550188, 0.966936111),
                 C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
-            },
-            ["Cool Rich Girl"] = {
+            }
+        },
+        ["Cool Rich Girl"] = {
         Headless = false,
         Korblox = false,
         CustomHead = {
