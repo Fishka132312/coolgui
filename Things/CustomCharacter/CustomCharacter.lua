@@ -72,13 +72,28 @@ local function clearCharacter()
 end
 
 _G.ApplySkin = function(skinName)
+    -- ПРОВЕРКА: Если скин не выбран (None) или база еще грузится, ничего не делаем
+    if not skinName or skinName == "None" or skinName == "Загрузка..." or skinName == "" then 
+        return 
+    end
+    
     local data = _G.Skins[skinName]
-    if not data then return end
+    
+    -- Если такого скина нет в базе данных, тоже выходим, не раздевая персонажа
+    if not data then 
+        warn("Скин '" .. tostring(skinName) .. "' не найден в базе данных!")
+        return 
+    end
+    
     local char = getChar()
     
+    -- Сохраняем твой оригинальный вид ТОЛЬКО один раз (при самом первом переодевании)
     _G.SaveOriginal()
+    
+    -- Теперь, когда мы уверены, что скин существует, очищаем персонажа
     clearCharacter()
 
+    -- Применяем цвета тела
     local bc = Instance.new("BodyColors", char)
     if data.BodyColors then
         for prop, color in pairs(data.BodyColors) do
@@ -86,6 +101,7 @@ _G.ApplySkin = function(skinName)
         end
     end
 
+    -- Применяем одежду
     if data.Shirt then
         local s = Instance.new("Shirt", char)
         s.ShirtTemplate = data.Shirt
@@ -95,6 +111,7 @@ _G.ApplySkin = function(skinName)
         p.PantsTemplate = data.Pants
     end
 
+    -- Настройка головы (Headless)
     if char:FindFirstChild("Head") and char.Head:FindFirstChild("Mesh") then
         if data.Headless then
             char.Head.Mesh.MeshId = "http://www.roblox.com/asset/?id=134079402"
@@ -102,12 +119,14 @@ _G.ApplySkin = function(skinName)
         end
     end
 
+    -- Применяем Korblox (Правую ногу)
     if data.Korblox then
         local mesh = Instance.new("CharacterMesh", char)
         mesh.BodyPart = Enum.BodyPart.RightLeg
         mesh.MeshId = 101851696
     end
 
+    -- Добавляем аксессуары
     if data.Accessories then
         for _, accData in ipairs(data.Accessories) do
             local acc = Instance.new("Accessory")
