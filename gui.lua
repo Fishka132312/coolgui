@@ -124,18 +124,23 @@ Tab:AddToggle({
     Name = "Активировать скин",
     Default = false,
     Callback = function(Value)
-        _G.IsSkinEnabled = Value -- Запоминаем состояние включена ли функция
+        -- Используем ту же переменную, что и в базе данных
+        _G.IsSkinActive = Value 
         
         if Value then
-            -- Если включили и скин выбран
-            if _G.ApplySkin and selectedSkin and selectedSkin ~= "None" and selectedSkin ~= "Загрузка..." then
-                _G.ApplySkin(selectedSkin)
+            -- Проверяем, выбран ли скин и загружена ли функция
+            if selectedSkin and selectedSkin ~= "None" and selectedSkin ~= "Загрузка..." and selectedSkin ~= "" then
+                if _G.ApplySkin then
+                    _G.ApplySkin(selectedSkin)
+                end
             else
-                -- Если нажали Вкл, но ничего не выбрали
-                warn("Скин не выбран! Выберите что-нибудь в списке.")
+                -- Если скин не выбран, выключаем Toggle обратно, чтобы не забагалось
+                warn("Скин не выбран! Выберите скин из списка.")
+                -- Если твоя библиотека поддерживает программное выключение, можно добавить его тут
+                _G.IsSkinActive = false 
             end
         else
-            -- Если выключили - возвращаем твой оригинальный вид
+            -- Если выключили - возвращаем оригинал
             if _G.RestoreOriginal then
                 _G.RestoreOriginal()
             end
