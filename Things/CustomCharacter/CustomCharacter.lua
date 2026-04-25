@@ -152,27 +152,14 @@ for name, _ in pairs(_G.Skins) do
 end
 
 _G.IsSkinActive = false
-_G.IsProcessing = false
 
 _G.SaveOriginal = function()
-    -- КРИТИЧЕСКАЯ ПРОВЕРКА: Если оригинал уже записан, ВООБЩЕ ничего не делаем.
-    -- Это предотвращает перезапись вашего скина данными из мода.
-    if _G.OriginalAppearance ~= nil then 
-        return 
-    end 
-
-    -- Если сейчас идет процесс смены скина, не сохраняем (чтобы не сохранить промежуточное состояние)
-    if _G.IsProcessing then
-        return
-    end
+    if _G.OriginalAppearance ~= nil then return end 
 
     local char = getChar()
     
-    -- Проверка на то, что персонаж загрузился. 
-    -- Если нет ни рубашки, ни штанов, ни аксессуаров — подождем, иначе сохраним "голыша".
-    local hasAppearance = char:FindFirstChildOfClass("Shirt") or char:FindFirstChildOfClass("Pants") or char:FindFirstChildOfClass("Accessory")
-    if not hasAppearance then
-        task.wait(1.5) -- Увеличил время ожидания для стабильности при спавне
+    if not char:FindFirstChild("AppearanceRoot") and not char:FindFirstChildOfClass("Accessory") then
+        task.wait(1) 
     end
 
     _G.OriginalAppearance = {
@@ -184,7 +171,6 @@ _G.SaveOriginal = function()
         Pants = nil
     }
     
-    -- Перебор объектов персонажа
     for _, obj in ipairs(char:GetChildren()) do
         if obj:IsA("Accessory") then
             local clone = obj:Clone()
@@ -197,21 +183,15 @@ _G.SaveOriginal = function()
         elseif obj:IsA("Pants") then
             _G.OriginalAppearance.Pants = obj.PantsTemplate
         elseif obj:IsA("BodyColors") then
-            -- Клонируем BodyColors, чтобы сохранить все цвета (руки, ноги и т.д.)
             _G.OriginalAppearance.BodyColors = obj:Clone()
         end
     end
 
-    -- Сохранение данных головы
     local head = char:FindFirstChild("Head")
     if head then
-        -- Лицо
         local face = head:FindFirstChild("face")
-        if face then 
-            _G.OriginalAppearance.Face = face.Texture 
-        end
+        if face then _G.OriginalAppearance.Face = face.Texture end
         
-        -- Сетка головы (чтобы вернуть обычную голову после Headless)
         local mesh = head:FindFirstChildOfClass("SpecialMesh") or head:FindFirstChild("Mesh")
         if mesh then
             local mClone = mesh:Clone()
@@ -220,7 +200,7 @@ _G.SaveOriginal = function()
         end
     end
     
-    print("--- ОРИГИНАЛЬНЫЙ ОБЛИК ЗАПОМНЕН: " .. #_G.OriginalAppearance.Items .. " аксессуаров ---")
+    print("--- СКИН СОХРАНЕН: " .. #_G.OriginalAppearance.Items .. " аксессуаров ---")
 end
 
 local function clearCharacter()
@@ -260,12 +240,6 @@ if player.Character then
 end
 
 _G.ApplySkin = function(skinName)
-    -- Проверка: если скрипт уже в процессе смены скина, выходим
-    if _G.IsProcessing then 
-        warn("Подождите, идет смена скина...")
-        return 
-    end
-    
     if not skinName or skinName == "None" or skinName == "Загрузка..." or skinName == "" then 
         return 
     end
@@ -276,21 +250,13 @@ _G.ApplySkin = function(skinName)
         return 
     end
     
-    -- Ставим блокировку
-    _G.IsProcessing = true
-    
-    -- Сохраняем оригинал (внутри SaveOriginal уже должна быть проверка if OriginalAppearance ~= nil)
     _G.SaveOriginal()
     
     _G.IsSkinActive = true
 
     local char = getChar()
-    
-    -- Очищаем персонажа
     clearCharacter()
-    task.wait(0.1) -- Короткая пауза, чтобы объекты точно удалились
 
-    -- Настройка цветов тела
     local bc = Instance.new("BodyColors", char)
     if data.BodyColors then
         for prop, color in pairs(data.BodyColors) do
@@ -298,17 +264,9 @@ _G.ApplySkin = function(skinName)
         end
     end
 
-    -- Одежда
-    if data.Shirt then 
-        local s = Instance.new("Shirt", char)
-        s.ShirtTemplate = data.Shirt 
-    end
-    if data.Pants then 
-        local p = Instance.new("Pants", char)
-        p.PantsTemplate = data.Pants 
-    end
+    if data.Shirt then Instance.new("Shirt", char).ShirtTemplate = data.Shirt end
+    if data.Pants then Instance.new("Pants", char).PantsTemplate = data.Pants end
 
-    -- Голова (Headless или кастомная)
     if char:FindFirstChild("Head") then
         local head = char.Head
         
@@ -321,12 +279,11 @@ _G.ApplySkin = function(skinName)
             m.Name = "Mesh"
             m.MeshId = data.CustomHead.MeshId
             m.TextureId = data.CustomHead.TextureId or ""
-            m.Scale = data.CustomHead.Scale or Vector3.new(1, 1, 1)
-            m.Offset = data.CustomHead.Offset or Vector3.new(0, 0, 0)
+            m.Scale = Vector3.new(1, 1, 1)
+            m.Offset = Vector3.new(0, 0, 0)
         end
     end
 
-    -- Korblox (Правая нога)
     if data.Korblox then
         local mesh = Instance.new("CharacterMesh", char)
         mesh.BodyPart = Enum.BodyPart.RightLeg
@@ -335,7 +292,6 @@ _G.ApplySkin = function(skinName)
         mesh.OverlayTextureId = 101851254
     end
 
-    -- Аксессуары
     if data.Accessories then
         local function toCFrame(cfData)
             if not cfData then return CFrame.new() end
@@ -377,11 +333,6 @@ _G.ApplySkin = function(skinName)
             end
         end
     end
-
-    -- Снимаем блокировку после завершения всех операций
-    task.wait(0.2)
-    _G.IsProcessing = false
-    print("Скин '" .. skinName .. "' успешно применен.")
 end
 
 _G.RestoreOriginal = function()
