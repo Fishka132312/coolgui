@@ -186,13 +186,29 @@ _G.Skins = {
             MeshId = "rbxassetid://115355460861394",
             TextureId = "rbxassetid://76689256681394",
         },
-        BodyMeshes = {
+        R6BodyMeshes = {
             ["LeftArm"] = { MeshId = 83001137 },
             ["RightArm"] = { MeshId = 83001181 },
             ["LeftLeg"] = { MeshId = 81487640 },
             ["RightLeg"] = { MeshId = 81487710 },
             ["Torso"] = { MeshId = 82987757 },
         },
+        R15BodyMeshes = {
+        ["UpperTorso"]     = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174058" },
+        ["LowerTorso"]     = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174057" },
+        ["LeftUpperArm"]   = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174089" },
+        ["LeftLowerArm"]   = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174056" },
+        ["LeftHand"]       = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997173998" },
+        ["RightUpperArm"]  = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997173999" },
+        ["RightLowerArm"]  = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997173930" },
+        ["RightHand"]      = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997173932" },
+        ["LeftUpperLeg"]   = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997173925" },
+        ["LeftLowerLeg"]   = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997173927" },
+        ["LeftFoot"]       = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997173950" },
+        ["RightUpperLeg"]  = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174087" },
+        ["RightLowerLeg"]  = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174053" },
+        ["RightFoot"]      = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174055" },
+    },
         BodyColors = {
             HeadColor3 = Color3.fromRGB(204, 142, 105),
             TorsoColor3 = Color3.fromRGB(204, 142, 105),
@@ -380,9 +396,12 @@ _G.ApplySkin = function(skinName)
     _G.IsSkinActive = true
 
     local char = getChar()
+    local humanoid = char:FindFirstChildOfClass("Humanoid")
+    local isR15 = humanoid and humanoid.RigType == Enum.HumanoidRigType.R15
+    
     clearCharacter()
 
-    -- Настройка цветов тела
+    -- 1. Настройка цветов тела
     local bc = Instance.new("BodyColors", char)
     if data.BodyColors then
         for prop, color in pairs(data.BodyColors) do
@@ -390,11 +409,11 @@ _G.ApplySkin = function(skinName)
         end
     end
 
-    -- Настройка одежды
+    -- 2. Настройка одежды
     if data.Shirt then Instance.new("Shirt", char).ShirtTemplate = data.Shirt end
     if data.Pants then Instance.new("Pants", char).PantsTemplate = data.Pants end
 
-    -- Настройка головы (Headless или Custom)
+    -- 3. Настройка головы (Headless или Custom)
     if char:FindFirstChild("Head") then
         local head = char.Head
         if data.Headless then
@@ -411,41 +430,59 @@ _G.ApplySkin = function(skinName)
         end
     end
 
-    --- [НОВЫЙ БЛОК: КАСТОМНЫЕ ЧАСТИ ТЕЛА (CharacterMesh)] ---
-    if data.BodyMeshes then
-        local partMapping = {
-            ["Torso"] = Enum.BodyPart.Torso,
-            ["LeftArm"] = Enum.BodyPart.LeftArm,
-            ["RightArm"] = Enum.BodyPart.RightArm,
-            ["LeftLeg"] = Enum.BodyPart.LeftLeg,
-            ["RightLeg"] = Enum.BodyPart.RightLeg,
-            ["Head"] = Enum.BodyPart.Head
-        }
-
-        for partName, meshInfo in pairs(data.BodyMeshes) do
-            local bodyPartEnum = partMapping[partName]
-            -- Проверяем, что меш указан и часть тела существует в списке
-            if bodyPartEnum and meshInfo.MeshId and meshInfo.MeshId ~= "" then
-                local cm = Instance.new("CharacterMesh")
-                cm.BodyPart = bodyPartEnum
-                cm.MeshId = tostring(meshInfo.MeshId):gsub("%D", "") -- оставляем только цифры ID
-                cm.BaseTextureId = meshInfo.TextureId or 0
-                cm.Parent = char
+    -- 4. ПРИМЕНЕНИЕ МЕШЕЙ ТЕЛА (R6 vs R15)
+    if isR15 then
+        -- Логика для R15: ищем части тела и меняем ID в MeshPart
+        if data.R15BodyMeshes then
+            for partName, meshInfo in pairs(data.R15BodyMeshes) do
+                local part = char:FindFirstChild(partName)
+                if part and part:IsA("MeshPart") then
+                    pcall(function()
+                        part.MeshId = tostring(meshInfo.MeshId)
+                        if meshInfo.TextureId then
+                            part.TextureID = tostring(meshInfo.TextureId)
+                        end
+                    end)
+                end
             end
+        end
+    else
+        -- Логика для R6: используем CharacterMesh
+        -- Проверяем R6BodyMeshes, если пусто — берем старый BodyMeshes для совместимости
+        local r6Data = data.R6BodyMeshes or data.BodyMeshes 
+        if r6Data then
+            local partMapping = {
+                ["Torso"] = Enum.BodyPart.Torso,
+                ["LeftArm"] = Enum.BodyPart.LeftArm,
+                ["RightArm"] = Enum.BodyPart.RightArm,
+                ["LeftLeg"] = Enum.BodyPart.LeftLeg,
+                ["RightLeg"] = Enum.BodyPart.RightLeg,
+                ["Head"] = Enum.BodyPart.Head
+            }
+
+            for partName, meshInfo in pairs(r6Data) do
+                local bodyPartEnum = partMapping[partName]
+                if bodyPartEnum and meshInfo.MeshId then
+                    local cm = Instance.new("CharacterMesh")
+                    cm.BodyPart = bodyPartEnum
+                    cm.MeshId = tostring(meshInfo.MeshId):gsub("%D", "") 
+                    cm.BaseTextureId = meshInfo.TextureId or 0
+                    cm.Parent = char
+                end
+            end
+        end
+        
+        -- Спец. проверка Korblox для R6
+        if data.Korblox and not (r6Data and r6Data.RightLeg) then
+            local mesh = Instance.new("CharacterMesh", char)
+            mesh.BodyPart = Enum.BodyPart.RightLeg
+            mesh.MeshId = 101851696
+            mesh.BaseTextureId = 0 
+            mesh.OverlayTextureId = 101851254
         end
     end
 
-    -- Старая проверка на Korblox (оставлена для совместимости)
-    if data.Korblox and not (data.BodyMeshes and data.BodyMeshes.RightLeg) then
-        local mesh = Instance.new("CharacterMesh", char)
-        mesh.BodyPart = Enum.BodyPart.RightLeg
-        mesh.MeshId = 101851696
-        mesh.BaseTextureId = 0 
-        mesh.OverlayTextureId = 101851254
-    end
-    ----------------------------------------------------------
-
-    -- Настройка аксессуаров
+    -- 5. Настройка аксессуаров
     if data.Accessories then
         local function toCFrame(cfData)
             if not cfData then return CFrame.new() end
