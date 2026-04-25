@@ -1,6 +1,10 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
-local character = player.Character or player.CharacterAdded:Wait()
+
+-- Функция для безопасного получения персонажа в любой момент
+local function getChar()
+    return player.Character or player.CharacterAdded:Wait()
+end
 
 _G.OriginalAppearance = nil
 _G.Skins = {
@@ -37,16 +41,16 @@ _G.Skins = {
     }
 }
 
+-- Создаем список имен СРАЗУ
 _G.SkinNames = {}
 for name, _ in pairs(_G.Skins) do
     table.insert(_G.SkinNames, name)
 end
 
--- Улучшенное сохранение оригинала
 _G.SaveOriginal = function()
     if _G.OriginalAppearance then return end
+    local char = getChar()
     _G.OriginalAppearance = {}
-    local char = player.Character or character
     
     for _, obj in ipairs(char:GetChildren()) do
         if obj:IsA("Accessory") or obj:IsA("Shirt") or obj:IsA("Pants") or obj:IsA("BodyColors") or obj:IsA("CharacterMesh") then
@@ -59,7 +63,7 @@ _G.SaveOriginal = function()
 end
 
 local function clearCharacter()
-    local char = player.Character or character
+    local char = getChar()
     for _, obj in ipairs(char:GetChildren()) do
         if obj:IsA("Accessory") or obj:IsA("Shirt") or obj:IsA("Pants") or obj:IsA("BodyColors") or obj:IsA("CharacterMesh") then
             obj:Destroy()
@@ -70,7 +74,7 @@ end
 _G.ApplySkin = function(skinName)
     local data = _G.Skins[skinName]
     if not data then return end
-    local char = player.Character or character
+    local char = getChar()
     
     _G.SaveOriginal()
     clearCharacter()
@@ -102,7 +106,6 @@ _G.ApplySkin = function(skinName)
         local mesh = Instance.new("CharacterMesh", char)
         mesh.BodyPart = Enum.BodyPart.RightLeg
         mesh.MeshId = 101851696
-        -- Убрали OverlayTemplate, вызывавший ошибку
     end
 
     if data.Accessories then
@@ -131,7 +134,7 @@ _G.ApplySkin = function(skinName)
 end
 
 _G.RestoreOriginal = function()
-    local char = player.Character or character
+    local char = getChar()
     clearCharacter()
     if _G.OriginalAppearance then
         for _, obj in pairs(_G.OriginalAppearance) do
