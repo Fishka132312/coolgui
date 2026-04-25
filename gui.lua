@@ -81,42 +81,56 @@ local Section = Tab:AddSection({
 	Name = "Free Skins"
 })
 
--- Создаем Dropdown с заглушкой, чтобы скрипт не падал
+-------------------------Custom Skin---------------------------
+local selectedSkin = "None" -- Изначально ничего не выбрано
+
 local SkinSelector = Tab:AddDropdown({
     Name = "Выберите скин",
     Default = "None",
     Options = {"Загрузка..."},
     Callback = function(Value)
         selectedSkin = Value
+        -- Если Toggle уже включен (активен), то при смене скина в списке персонаж сразу переоденется
+        if _G.ApplySkin and _G.IsSkinEnabled and selectedSkin ~= "None" then
+            _G.ApplySkin(selectedSkin)
+        end
     end    
 })
 
--- Функция, которая будет ждать появления данных и обновит список
+-- Функция ожидания базы данных
 task.spawn(function()
     local timeout = 0
-    while not _G.SkinNames and timeout < 15 do -- Ждем до 15 секунд
+    while not _G.SkinNames and timeout < 15 do
         task.wait(0.5)
         timeout = timeout + 0.5
     end
 
-    if _G.SkinNames then
-        -- Обновляем Dropdown списком из базы данных
+    if _G.SkinNames and #_G.SkinNames > 0 then
+        -- Просто обновляем список доступных скинов, НО НЕ выбираем их автоматически
         SkinSelector:Refresh(_G.SkinNames, true)
-        selectedSkin = _G.SkinNames[1]
+        print("Список скинов загружен.")
     else
-        SkinSelector:Refresh({"Ошибка загрузки"}, true)
+        SkinSelector:Refresh({"Ошибка: База пуста"}, true)
     end
 end)
 
+-- Переключатель (Toggle)
 Tab:AddToggle({
     Name = "Активировать скин",
     Default = false,
     Callback = function(Value)
+        _G.IsSkinEnabled = Value -- Запоминаем состояние включена ли функция
+        
         if Value then
-            if _G.ApplySkin and selectedSkin and selectedSkin ~= "None" then
+            -- Если включили и скин выбран
+            if _G.ApplySkin and selectedSkin and selectedSkin ~= "None" and selectedSkin ~= "Загрузка..." then
                 _G.ApplySkin(selectedSkin)
+            else
+                -- Если нажали Вкл, но ничего не выбрали
+                warn("Скин не выбран! Выберите что-нибудь в списке.")
             end
         else
+            -- Если выключили - возвращаем твой оригинальный вид
             if _G.RestoreOriginal then
                 _G.RestoreOriginal()
             end
