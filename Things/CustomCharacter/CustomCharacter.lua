@@ -194,11 +194,12 @@ _G.Skins = {
         ["BodyTypeScale"] = 0,
     },
         R6BodyMeshes = {
-            ["LeftArm"] = { MeshId = 83001137 },
-            ["RightArm"] = { MeshId = 83001181 },
-            ["LeftLeg"] = { MeshId = 81487640 },
-            ["RightLeg"] = { MeshId = 81487710 },
-            ["Torso"] = { MeshId = 82987757 },
+            ["BodyTypeScale"] = 0,
+        ["BodyProportionScale"] = 0,
+        ["BodyWidthScale"] = 0.699999988079071,
+        ["BodyHeightScale"] = 0.8999999761581421,
+        ["BodyDepthScale"] = 0.8500000238418579,
+        ["HeadScale"] = 1,
         },
         R15BodyMeshes = {
         ["UpperTorso"]     = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174058" },
