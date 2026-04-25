@@ -31,6 +31,100 @@ _G.Skins = {
             }
         }
     },
+    ["Skin2test"] = {
+        Headless = true, -- false, так как мы ставим свою голову
+        Korblox = true,
+        BodyColors = {
+            HeadColor3 = Color3.fromRGB(253, 255, 218),
+            TorsoColor3 = Color3.fromRGB(253, 255, 218),
+            LeftArmColor3 = Color3.fromRGB(253, 255, 218),
+            LeftLegColor3 = Color3.fromRGB(253, 255, 218),
+            RightArmColor3 = Color3.fromRGB(253, 255, 218),
+            RightLegColor3 = Color3.fromRGB(253, 255, 218),
+            
+        },
+        Shirt = "http://www.roblox.com/asset/?id=9195449962",
+        Pants = "http://www.roblox.com/asset/?id=6930028736",
+        Accessories = {
+            {
+                Name = "1",
+                MeshId = "rbxassetid://6544038046",
+                TextureId = "http://www.roblox.com/asset/?id=6544029865",
+                C0 = CFrame.new(0.00788385514, 0.215940952, 0.00236511254, 1, 0, 0, 0, 0.999996841, -0.00250333641, 0, 0.00250333641, 0.999996841),
+                C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "2",
+                MeshId = "rbxassetid://6965173581",
+                TextureId = "rbxassetid://6965173394",
+                C0 = CFrame.new(5.76972961e-05, -0.446971893, 0.000505998731, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "3",
+                MeshId = "rbxassetid://8787409279",
+                TextureId = "rbxassetid://8787432743",
+                C0 = CFrame.new(0.000167846709, -0.456766367, -0.017478941, -0.999848127, 0.000604231202, -0.017436387, 0.000604231202, 0.999999821, 5.2682044e-06, 0.017436387, -5.2682044e-06, -0.999848366),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "4",
+                MeshId = "rbxassetid://7004527040",
+                TextureId = "rbxassetid://7004539074",
+                C0 = CFrame.new(-0.00132751465, 0.172905982, -0.0212802887, -0.999999762, 0.000604254019, 0, 0.000604254019, 0.999999821, 0, 0, 0, -1),
+                C1 = CFrame.new(0, -1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "5",
+                MeshId = "rbxassetid://14282065531",
+                TextureId = "rbxassetid://14282028098",
+                C0 = CFrame.new(-0.0747375414, 0.165453434, -0.0651750565, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "6",
+                MeshId = "rbxassetid://11146163759",
+                TextureId = "http://www.roblox.com/asset/?id=11146030162",
+                C0 = CFrame.new(0.170048654, -0.257273197, -0.346508145, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0, 0.5, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "6",
+                MeshId = "rbxassetid://13947623093",
+                TextureId = "rbxassetid://13947691674",
+                C0 = CFrame.new(-2.3648141e-05, 0.25254631, 0.0580291748, -1, 0, 0, 0, 1, 0, 0, 0, -1),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "7",
+                MeshId = "rbxassetid://7259065617",
+                TextureId = "http://www.roblox.com/asset/?id=7104179851",
+                C0 = CFrame.new(-0.0430011787, 0.282998562, -0.0699996948, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "8",
+                MeshId = "rbxassetid://11610173780",
+                TextureId = "rbxassetid://11610173941",
+                C0 = CFrame.new(-0.000413894653, -0.147464991, 0.570066512, 1, 0, 0, 0, 0.996039689, -0.0889098421, 0, 0.0889098421, 0.996039689),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "9",
+                MeshId = "rbxassetid://10432172130",
+                TextureId = "rbxassetid://10431957786",
+                C0 = CFrame.new(-4.89909798e-05, 0.363111854, 0.0185300764, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "10",
+                MeshId = "rbxassetid://7805064587",
+                TextureId = "http://www.roblox.com/asset/?id=7900022736",
+                C0 = CFrame.new(-0.00323867775, 0.193525791, 0.186584473, -1, 0, 0, 0, 1, 0, 0, 0, -1),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+        }
+    },
     ["GigaChad"] = {
         Headless = false,
         Korblox = false,
