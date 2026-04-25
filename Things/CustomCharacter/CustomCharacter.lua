@@ -111,6 +111,7 @@ _G.Skins = {
             }
         }
     },
+
     ["Rich Black/White eboy"] = {
         Headless = false,
         Korblox = false,
@@ -179,91 +180,85 @@ _G.Skins = {
             }
         }
     },
+
     ["Cool Rich Girl"] = {
         Headless = false,
         Korblox = false,
-        Headless = false,
-    Korblox = false,
-    
-    -- Цвета кожи (оставляем, если нужно менять цвет тела под скин)
-    BodyColors = {
-        HeadColor3 = Color3.fromRGB(204, 142, 105),
-        TorsoColor3 = Color3.fromRGB(204, 142, 105),
-        LeftArmColor3 = Color3.fromRGB(204, 142, 105),
-        LeftLegColor3 = Color3.fromRGB(204, 142, 105),
-        RightArmColor3 = Color3.fromRGB(204, 142, 105),
-        RightLegColor3 = Color3.fromRGB(204, 142, 105),
-    },
-    
-    -- Одежда
-    Shirt = "http://www.roblox.com/asset/?id=6472288557",
-    Pants = "http://www.roblox.com/asset/?id=6066432764",
-    
-    -- Аксессуары (сумки, волосы, очки и т.д.)
-    Accessories = {
-        {
-            Name = "chicBowPursePink",
-            MeshId = "rbxassetid://6843422307",
-            TextureId = "rbxassetid://6843422345",
-            ParentPart = "Torso",
-            C0 = CFrame.new(0.387207031, 0.0957374573, -0.765258789, 0, 0, -1, 0, 1, 0, 1, 0, 0),
-            C1 = CFrame.new(0, 0, -0.5, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+        BodyColors = {
+            HeadColor3 = Color3.fromRGB(204, 142, 105),
+            TorsoColor3 = Color3.fromRGB(204, 142, 105),
+            LeftArmColor3 = Color3.fromRGB(204, 142, 105),
+            LeftLegColor3 = Color3.fromRGB(204, 142, 105),
+            RightArmColor3 = Color3.fromRGB(204, 142, 105),
+            RightLegColor3 = Color3.fromRGB(204, 142, 105),
         },
-        {
-            Name = "NewSideBangsCaramelAccessory",
-            MeshId = "rbxassetid://5945976587",
-            TextureId = "rbxassetid://6322812499",
-            ParentPart = "Head",
-            C0 = CFrame.new(-0.00221633911, -0.166851044, -0.286561489, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            C1 = CFrame.new(0, 0, -0.600000024, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-        },
-        {
-            Name = "BandageAccessory",
-            MeshId = "rbxassetid://5699721463",
-            TextureId = "http://www.roblox.com/asset/?id=5699711147",
-            ParentPart = "Head",
-            C0 = CFrame.new(-0.000275611877, -0.0262117386, 0.597229004, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            C1 = CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-        },
-        {
-            Name = "BubblyPigtails",
-            MeshId = "rbxassetid://6633403700",
-            TextureId = "rbxassetid://6632272463",
-            ParentPart = "Head",
-            C0 = CFrame.new(-4.4408921e-16, 1.22000003, -0.130999997, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-        },
-        {
-            Name = "FluffyEarringsAccessory",
-            MeshId = "rbxassetid://4632062805",
-            TextureId = "rbxassetid://4632070627",
-            ParentPart = "Head",
-            C0 = CFrame.new(0, 0.900715947, -0.00371140987, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-        },
-        {
-            Name = "PinkBaddieSunniesAccessory",
-            MeshId = "rbxassetid://5582632117",
-            TextureId = "http://www.roblox.com/asset/?id=5582639653",
-            ParentPart = "Head",
-            C0 = CFrame.new(0.00819158554, -0.0284600258, 0.298658371, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-        },
-        {
-            Name = "PearlArmbandAccessory",
-            MeshId = "rbxassetid://6714866689",
-            TextureId = "http://www.roblox.com/asset/?id=6714855730",
-            ParentPart = "Left Arm",
-            C0 = CFrame.new(0.0630722046, 0.448396206, -0.0439186096, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-        },
-        {
-            Name = "WomansPearl",
-            MeshId = "rbxassetid://6471990108",
-            TextureId = "http://www.roblox.com/asset/?id=6471995247",
-            ParentPart = "Torso",
-            C0 = CFrame.new(0.000244140625, 0.252067804, 0.156005859, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+        Shirt = "http://www.roblox.com/asset/?id=6472288557",
+        Pants = "http://www.roblox.com/asset/?id=6066432764",
+        Accessories = {
+            {
+                Name = "chicBowPursePink",
+                MeshId = "rbxassetid://6843422307",
+                TextureId = "rbxassetid://6843422345",
+                ParentPart = "Torso",
+                C0 = CFrame.new(0.387207031, 0.0957374573, -0.765258789, 0, 0, -1, 0, 1, 0, 1, 0, 0),
+                C1 = CFrame.new(0, 0, -0.5, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "NewSideBangsCaramelAccessory",
+                MeshId = "rbxassetid://5945976587",
+                TextureId = "rbxassetid://6322812499",
+                ParentPart = "Head",
+                C0 = CFrame.new(-0.00221633911, -0.166851044, -0.286561489, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0, -0.600000024, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "BandageAccessory",
+                MeshId = "rbxassetid://5699721463",
+                TextureId = "http://www.roblox.com/asset/?id=5699711147",
+                ParentPart = "Head",
+                C0 = CFrame.new(-0.000275611877, -0.0262117386, 0.597229004, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "BubblyPigtails",
+                MeshId = "rbxassetid://6633403700",
+                TextureId = "rbxassetid://6632272463",
+                ParentPart = "Head",
+                C0 = CFrame.new(-4.4408921e-16, 1.22000003, -0.130999997, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "FluffyEarringsAccessory",
+                MeshId = "rbxassetid://4632062805",
+                TextureId = "rbxassetid://4632070627",
+                ParentPart = "Head",
+                C0 = CFrame.new(0, 0.900715947, -0.00371140987, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "PinkBaddieSunniesAccessory",
+                MeshId = "rbxassetid://5582632117",
+                TextureId = "http://www.roblox.com/asset/?id=5582639653",
+                ParentPart = "Head",
+                C0 = CFrame.new(0.00819158554, -0.0284600258, 0.298658371, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "PearlArmbandAccessory",
+                MeshId = "rbxassetid://6714866689",
+                TextureId = "http://www.roblox.com/asset/?id=6714855730",
+                ParentPart = "Left Arm",
+                C0 = CFrame.new(0.0630722046, 0.448396206, -0.0439186096, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "WomansPearl",
+                MeshId = "rbxassetid://6471990108",
+                TextureId = "http://www.roblox.com/asset/?id=6471995247",
+                ParentPart = "Torso",
+                C0 = CFrame.new(0.000244140625, 0.252067804, 0.156005859, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            }
         }
     }
 }
