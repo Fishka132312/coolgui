@@ -156,32 +156,32 @@ end
 _G.IsSkinActive = false -- По умолчанию выключен
 
 _G.SaveOriginal = function()
-    -- Если кастомный скин уже активен, НЕ перезаписываем, 
-    -- чтобы случайно не сохранить кастомные вещи как "родные".
     if _G.IsSkinActive then return end 
 
     local char = getChar()
-    _G.OriginalAppearance = {} -- Очищаем старую таблицу и создаем новую
+    -- Создаем структуру: Items для объектов, Data для свойств
+    _G.OriginalAppearance = {
+        Items = {}, 
+        Data = {}
+    }
     
-    -- Сохраняем все элементы внешности
+    -- 1. Сохраняем объекты (одежда, аксессуары)
     for _, obj in ipairs(char:GetChildren()) do
         if obj:IsA("Accessory") or obj:IsA("Shirt") or obj:IsA("Pants") or obj:IsA("BodyColors") or obj:IsA("CharacterMesh") then
-            table.insert(_G.OriginalAppearance, obj:Clone())
+            table.insert(_G.OriginalAppearance.Items, obj:Clone())
         end
     end
 
-    -- Сохраняем меш головы и лицо
+    -- 2. Сохраняем меш головы и лицо отдельно в Data
     if char:FindFirstChild("Head") then
-        -- Сохраняем меш (чтобы вернуть форму головы)
         local m = char.Head:FindFirstChildOfClass("SpecialMesh") or char.Head:FindFirstChild("Mesh")
         if m then 
-            _G.OriginalAppearance.HeadMesh = m:Clone() 
+            _G.OriginalAppearance.Data.HeadMesh = m:Clone() 
         end
         
-        -- Запоминаем текстуру лица (чтобы не потерять твоё лицо при возврате)
         local face = char.Head:FindFirstChild("face")
         if face then
-            _G.OriginalAppearance.FaceTexture = face.Texture
+            _G.OriginalAppearance.Data.FaceTexture = face.Texture
         end
     end
 end
@@ -310,42 +310,34 @@ end
 
 _G.RestoreOriginal = function()
     local char = getChar()
-    
-    -- Указываем базе, что кастомный скин больше не активен
     _G.IsSkinActive = false 
     
-    -- Полностью очищаем персонажа от кастомных вещей
     clearCharacter() 
     
     if _G.OriginalAppearance then
-        -- Возвращаем все сохраненные вещи (одежду, аксессуары и т.д.)
-        for _, obj in pairs(_G.OriginalAppearance) do
-            if typeof(obj) == "Instance" then
+        -- Возвращаем предметы из списка Items
+        if _G.OriginalAppearance.Items then
+            for _, obj in ipairs(_G.OriginalAppearance.Items) do
                 obj:Clone().Parent = char
             end
         end
         
-        -- Возвращаем родную голову и лицо
+        -- Возвращаем голову и лицо из Data
         if char:FindFirstChild("Head") then
-            -- Если был сохранен меш головы, возвращаем его
-            if _G.OriginalAppearance.HeadMesh then
-                _G.OriginalAppearance.HeadMesh:Clone().Parent = char.Head
+            if _G.OriginalAppearance.Data.HeadMesh then
+                _G.OriginalAppearance.Data.HeadMesh:Clone().Parent = char.Head
             end
             
-            -- Делаем лицо снова видимым
             local face = char.Head:FindFirstChild("face")
             if face then 
                 face.Transparency = 0 
-                -- Если сохраняли текстуру лица, можно вернуть и её
-                if _G.OriginalAppearance.FaceID then
-                    face.Texture = _G.OriginalAppearance.FaceID
+                if _G.OriginalAppearance.Data.FaceTexture then
+                    face.Texture = _G.OriginalAppearance.Data.FaceTexture
                 end
             end
         end
     end
     
-    -- ВАЖНО: Удаляем данные о старом виде. 
-    -- Теперь при следующем ApplySkin скрипт сделает НОВЫЙ снимок персонажа.
     _G.OriginalAppearance = nil 
 end
 
