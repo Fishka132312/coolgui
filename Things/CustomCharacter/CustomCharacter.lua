@@ -466,46 +466,53 @@ _G.ApplySkin = function(skinName)
         p.Name = "Clothing_Pants"
         p.PantsTemplate = data.Pants 
     end
--- 6. Настройка головы (Headless или Custom)
+
+    -- 6. Настройка головы (Headless или Custom)
     if char:FindFirstChild("Head") then
         local head = char.Head
         
-        -- Убираем лицо (в R15 оно тоже бывает наклейкой)
+        -- Убираем лицо, если активен скин
         local face = head:FindFirstChild("face")
         if face then face.Transparency = 1 end
 
-        -- Очищаем старые меши (актуально для переключения на R6)
-        for _, obj in ipairs(head:GetChildren()) do
-            if obj:IsA("SpecialMesh") then obj:Destroy() end
-        end
-
         if data.Headless then
-            -- Для Headless в R15 проще всего использовать SpecialMesh с 0 масштабом
-            -- так как сам MeshId головы менять на "пустой" нельзя (будет дефолтный блок)
-            head.Transparency = 1 
-            local m = Instance.new("SpecialMesh", head)
-            m.Name = "HeadlessMesh"
-            m.MeshId = "http://www.roblox.com/asset/?id=134079402"
-            m.Scale = Vector3.new(0, 0, 0)
+            if isR15 then
+                -- Для R15 просто делаем MeshPart прозрачным (Headless)
+                head.Transparency = 1
+                -- Если есть вложенные меши или детали, их тоже скрываем
+                for _, child in ipairs(head:GetChildren()) do
+                    if child:IsA("Decal") or child:IsA("BasePart") then child.Transparency = 1 end
+                end
+            else
+                -- Для R6 используем классический метод со скейлом 0
+                local m = Instance.new("SpecialMesh", head)
+                m.Name = "HeadlessMesh"
+                m.MeshId = "http://www.roblox.com/asset/?id=134079402"
+                m.TextureId = "http://www.roblox.com/asset/?id=133940918"
+                m.Scale = Vector3.new(0, 0, 0)
+            end
         elseif data.CustomHead then
             if isR15 and head:IsA("MeshPart") then
-                -- ЛОГИКА ДЛЯ R15: Меняем свойства самого MeshPart
-                head.Transparency = 0
+                -- Логика для R15: меняем ID самой детали головы
                 head.MeshId = data.CustomHead.MeshId
                 head.TextureID = data.CustomHead.TextureId or ""
+                -- Если нужно менять размер в R15, лучше использовать HumanoidDescription, 
+                -- но в простом варианте можно попробовать скейлить саму деталь:
+                if data.CustomHead.Scale then
+                    -- В R15 MeshPart.Size заблокирован системой, поэтому масштаб головы 
+                    -- обычно меняется через свойства Humanoid (HeadScale)
+                    local hs = humanoid:FindFirstChild("HeadScale")
+                    if hs then hs.Value = data.CustomHead.Scale.X end -- берем X как среднее
+                end
             else
-                -- ЛОГИКА ДЛЯ R6: Используем SpecialMesh
-                head.Transparency = 1 -- Скрываем основной блок
-                local m = Instance.new("SpecialMesh", head)
+                -- Логика для R6: ставим SpecialMesh
+                local m = head:FindFirstChildOfClass("SpecialMesh") or Instance.new("SpecialMesh", head)
                 m.Name = "Mesh"
                 m.MeshId = data.CustomHead.MeshId
                 m.TextureId = data.CustomHead.TextureId or ""
                 m.Scale = data.CustomHead.Scale or Vector3.new(1, 1, 1)
                 m.Offset = data.CustomHead.Offset or Vector3.new(0, 0, 0)
             end
-        else
-            -- Сброс к дефолту, если скин не меняет голову
-            if isR15 then head.Transparency = 0 end
         end
     end
 
