@@ -3,6 +3,7 @@ local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
 local originalAppearance = nil
+local selectedSkin = nil
 
 local skins = {
     ["Skin1test"] = {
@@ -27,8 +28,17 @@ local skins = {
                 C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
             }
         }
+    },
+    ["GigaChad"] = {
+        Headless = false,
+        Korblox = false,
     }
 }
+
+local skinNames = {}
+for name, _ in pairs(skins) do
+    table.insert(skinNames, name)
+end
 
 local function saveOriginal()
     if originalAppearance then return end
