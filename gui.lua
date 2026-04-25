@@ -55,25 +55,6 @@ Tab:AddButton({
   	end    
 })
 
--------------------------My Script---------------------------
-
-local Tab = Window:MakeTab({
-	Name = "My Script",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
-
-local Section = Tab:AddSection({
-	Name = "Supported Games: Petsim99, Evade, BENPCORDIE "
-})
-
-Tab:AddButton({
-	Name = "MeowlSploit",
-	Callback = function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/MeowlSploit/refs/heads/main/xJ9v2PzL.lua'))()
-  	end    
-})
-
 -------------------------Custom Skin---------------------------
 
 local Tab = Window:MakeTab({
@@ -141,6 +122,26 @@ Tab:AddToggle({
         end
     end    
 })
+
+-------------------------My Script---------------------------
+
+local Tab = Window:MakeTab({
+	Name = "Game Script",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
+})
+
+local Section = Tab:AddSection({
+	Name = "Supported Games: Petsim99, Evade, BENPCORDIE "
+})
+
+Tab:AddButton({
+	Name = "MeowlSploit",
+	Callback = function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/MeowlSploit/refs/heads/main/xJ9v2PzL.lua'))()
+  	end    
+})
+
 -------------------------Download Any Game---------------------------
 
 local Tab = Window:MakeTab({
