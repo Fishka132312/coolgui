@@ -333,20 +333,48 @@ end
 
 local function clearCharacter()
     local char = getChar()
+    if not char then return end
+
+    -- 1. Массовое удаление элементов одежды и мешей тела
     for _, obj in ipairs(char:GetChildren()) do
-        if obj:IsA("Accessory") or obj:IsA("Shirt") or obj:IsA("Pants") or obj:IsA("BodyColors") or obj:IsA("CharacterMesh") then
+        if obj:IsA("Accessory") or 
+           obj:IsA("Shirt") or 
+           obj:IsA("Pants") or 
+           obj:IsA("BodyColors") or 
+           obj:IsA("CharacterMesh") or 
+           obj:IsA("ShirtGraphic") then -- Удаляет T-Shirts (наклейки)
             obj:Destroy()
         end
     end
     
-    if char:FindFirstChild("Head") then
-        for _, hObj in ipairs(char.Head:GetChildren()) do
-            if hObj:IsA("SpecialMesh") or hObj.Name == "Mesh" then
+    -- 2. Глубокая очистка головы
+    local head = char:FindFirstChild("Head")
+    if head then
+        for _, hObj in ipairs(head:GetChildren()) do
+            -- Удаляем все меши (стандартные и кастомные) и декали (лицо)
+            -- Проверка hObj:IsA("Decal") важна, если мы хотим полностью сбросить лицо
+            if hObj:IsA("SpecialMesh") or hObj:IsA("MeshPart") or hObj.Name == "Mesh" then
                 hObj:Destroy()
             end
+            
+            -- Скрываем или удаляем лицо (face)
+            if hObj:IsA("Decal") and hObj.Name == "face" then
+                -- Если скин активен — удаляем или скрываем лицо
+                if _G.IsSkinActive then
+                    hObj.Transparency = 1
+                else
+                    hObj.Transparency = 0 -- Возвращаем видимость для оригинала
+                end
+            end
         end
-        local face = char.Head:FindFirstChild("face")
-        if face then face.Transparency = 1 end 
+    end
+    
+    -- Дополнительная страховка: иногда меши R6 создают вложения внутри частей тела
+    for _, part in ipairs(char:GetChildren()) do
+        if part:IsA("BasePart") then
+            local m = part:FindFirstChildOfClass("SpecialMesh")
+            if m then m:Destroy() end
+        end
     end
 end
 
@@ -367,7 +395,11 @@ if player.Character then
     task.spawn(onCharacterAdded, player.Character)
 end
 
+_G.IsApplying = false -- Переменная-флаг для защиты от багов при быстром клике
+
 _G.ApplySkin = function(skinName)
+    -- 1. Проверки на входные данные и защиту от спама
+    if _G.IsApplying then return end 
     if not skinName or skinName == "None" or skinName == "Загрузка..." or skinName == "" then 
         return 
     end
@@ -378,16 +410,21 @@ _G.ApplySkin = function(skinName)
         return 
     end
     
+    -- Включаем режим применения
+    _G.IsApplying = true
     _G.SaveOriginal()
     _G.IsSkinActive = true
+    _G.CurrentSkinName = skinName
 
     local char = getChar()
     local humanoid = char:FindFirstChildOfClass("Humanoid")
     local isR15 = humanoid and humanoid.RigType == Enum.HumanoidRigType.R15
     
+    -- 2. Глубокая очистка персонажа перед наложением нового скина
     clearCharacter()
+    task.wait(0.1) -- Даем Roblox время физически удалить объекты
 
-    -- 1. Настройка цветов тела
+    -- 3. Настройка цветов тела
     local bc = Instance.new("BodyColors", char)
     if data.BodyColors then
         for prop, color in pairs(data.BodyColors) do
@@ -395,11 +432,7 @@ _G.ApplySkin = function(skinName)
         end
     end
 
-    -- 2. Настройка одежды
-    if data.Shirt then Instance.new("Shirt", char).ShirtTemplate = data.Shirt end
-    if data.Pants then Instance.new("Pants", char).PantsTemplate = data.Pants end
-
-    -- 3. Настройка тела R6 (CharacterMesh)
+    -- 4. Настройка мешей тела R6 (CharacterMesh)
     if data.R6BodyMeshes then
         local bodyPartMap = {
             ["Torso"]    = Enum.BodyPart.Torso,
@@ -422,17 +455,33 @@ _G.ApplySkin = function(skinName)
         end
     end
 
-    -- 4. Настройка головы (Headless или Custom)
+    -- 5. Настройка одежды
+    if data.Shirt then 
+        local s = Instance.new("Shirt", char)
+        s.Name = "Clothing_Shirt"
+        s.ShirtTemplate = data.Shirt 
+    end
+    if data.Pants then 
+        local p = Instance.new("Pants", char)
+        p.Name = "Clothing_Pants"
+        p.PantsTemplate = data.Pants 
+    end
+
+    -- 6. Настройка головы (Headless или Custom)
     if char:FindFirstChild("Head") then
         local head = char.Head
+        
+        -- Убираем лицо, если активен скин
+        local face = head:FindFirstChild("face")
+        if face then face.Transparency = 1 end
+
         if data.Headless then
-            -- Стандартный меш для невидимой головы (Headless)
             local m = Instance.new("SpecialMesh", head)
+            m.Name = "HeadlessMesh"
             m.MeshId = "http://www.roblox.com/asset/?id=134079402"
             m.TextureId = "http://www.roblox.com/asset/?id=133940918"
-            m.Scale = Vector3.new(0, 0, 0) -- На всякий случай уменьшаем в 0
+            m.Scale = Vector3.new(0, 0, 0)
         elseif data.CustomHead then
-            -- Кастомная голова (например, от других наборов)
             local m = Instance.new("SpecialMesh", head)
             m.Name = "Mesh"
             m.MeshId = data.CustomHead.MeshId
@@ -442,7 +491,7 @@ _G.ApplySkin = function(skinName)
         end
     end
 
-    -- 4. Настройка аксессуаров
+    -- 7. Настройка аксессуаров
     if data.Accessories then
         local function toCFrame(cfData)
             if not cfData then return CFrame.new() end
@@ -468,18 +517,19 @@ _G.ApplySkin = function(skinName)
             
             local targetName = accData.ParentPart or "Head"
             
-            -- Авто-адаптация имен частей тела под R15
+            -- Адаптация под R15
             if isR15 then
-                if targetName == "Torso" then targetName = "UpperTorso"
-                elseif targetName == "Left Arm" then targetName = "LeftUpperArm"
-                elseif targetName == "Right Arm" then targetName = "RightUpperArm"
-                elseif targetName == "Left Leg" then targetName = "LeftUpperLeg"
-                elseif targetName == "Right Leg" then targetName = "RightUpperLeg"
-                end
+                local r15Map = {
+                    ["Torso"] = "UpperTorso",
+                    ["Left Arm"] = "LeftUpperArm",
+                    ["Right Arm"] = "RightUpperArm",
+                    ["Left Leg"] = "LeftUpperLeg",
+                    ["Right Leg"] = "RightUpperLeg"
+                }
+                targetName = r15Map[targetName] or targetName
             end
 
             local targetPart = char:FindFirstChild(targetName)
-            
             if targetPart then
                 local weld = Instance.new("Weld", handle)
                 weld.Name = "AccessoryWeld"
@@ -488,11 +538,12 @@ _G.ApplySkin = function(skinName)
                 weld.C0 = toCFrame(accData.C0)
                 weld.C1 = toCFrame(accData.C1)
                 acc.Parent = char
-            else
-                warn("Ошибка: Часть тела " .. tostring(targetName) .. " не найдена для " .. accData.Name)
             end
         end
     end
+
+    -- Завершаем процесс
+    _G.IsApplying = false
 end
 
 _G.RestoreOriginal = function()
