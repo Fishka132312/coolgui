@@ -8,16 +8,21 @@ local scripts = {
 local baseUrl = 'https://raw.githubusercontent.com/Fishka132312/coolgui/refs/heads/main/Things/'
 
 task.spawn(function()
-    for i, scriptName in ipairs(uniqueScripts) do
+    -- Использовал правильное имя таблицы: scripts вместо uniqueScripts
+    for i, scriptName in ipairs(scripts) do
         local fullUrl = baseUrl .. scriptName
         
         local success, err = pcall(function()
             local code = game:HttpGet(fullUrl)
-            loadstring(code)()
+            if code then
+                loadstring(code)()
+            else
+                warn("Не удалось получить код для: " .. scriptName)
+            end
         end)
         
         if not success then
-            warn("Ошибка в " .. scriptName .. ": " .. tostring(err))
+            warn("Ошибка при загрузке " .. scriptName .. ": " .. tostring(err))
         end
         
         task.wait(0.7) 
