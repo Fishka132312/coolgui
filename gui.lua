@@ -86,7 +86,6 @@ local Section = Tab:AddSection({
 	Name = "Free Skins"
 })
 
--------------------------Custom Skin---------------------------
 local selectedSkin = "None" -- Изначально ничего не выбрано
 
 local SkinSelector = Tab:AddDropdown({
@@ -95,11 +94,11 @@ local SkinSelector = Tab:AddDropdown({
     Options = {"Загрузка..."},
     Callback = function(Value)
         selectedSkin = Value
-        -- Если Toggle уже включен (активен), то при смене скина в списке персонаж сразу переоденется
-        if _G.ApplySkin and _G.IsSkinEnabled and selectedSkin ~= "None" then
+        -- ИСПРАВЛЕНО: Проверяем _G.IsSkinActive
+        if _G.ApplySkin and _G.IsSkinActive and selectedSkin ~= "None" then
             _G.ApplySkin(selectedSkin)
         end
-    end    
+    end     
 })
 
 -- Функция ожидания базы данных
