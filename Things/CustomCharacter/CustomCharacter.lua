@@ -139,6 +139,10 @@ _G.Skins = {
     ["Rick Black/White eboy"] = {
         Headless = false,
         Korblox = false,
+        CustomHead = {
+            MeshId = "rbxassetid://94343742178760",
+            TextureId = "rbxassetid://119330915745370",
+        },
         BodyColors = {
             HeadColor3 = Color3.fromRGB(253, 255, 218),
             TorsoColor3 = Color3.fromRGB(253, 255, 218),
@@ -163,7 +167,7 @@ _G.Skins = {
                 Name = "2",
                 MeshId = "rbxassetid://139340584178768",
                 TextureId = "rbxassetid://129480931135684",
-                ParentPart = "Head",
+                ParentPart = "Torso",
                 C0 = CFrame.new(0.018773092, -0.200564086, 0.500219405, -1, 0, 0, 0, 1, 0, 0, 0, -1),
                 C1 = CFrame.new(0, 0, -0.5, 1, 0, 0, 0, 1, 0, 0, 0, 1)
             },
