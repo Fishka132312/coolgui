@@ -8,7 +8,6 @@ local scripts = {
 local baseUrl = 'https://raw.githubusercontent.com/Fishka132312/coolgui/refs/heads/main/Things/'
 
 task.spawn(function()
-    -- Использовал правильное имя таблицы: scripts вместо uniqueScripts
     for i, scriptName in ipairs(scripts) do
         local fullUrl = baseUrl .. scriptName
         
@@ -89,16 +88,14 @@ local Section = Tab:AddSection({
 
 local selectedSkin = "None" 
 
--- 1. Дропдаун выбора скина
 local SkinSelector = Tab:AddDropdown({
     Name = "Choose skin",
     Default = "None",
     Options = {"Loading..."},
     Callback = function(Value)
         selectedSkin = Value
+		_G.CurrentSkinName = Value
         
-        -- Если скин уже активирован (Toggle включен), то при смене скина в списке
-        -- он должен сразу переодеваться
         if _G.IsSkinActive and selectedSkin ~= "None" and selectedSkin ~= "Загрузка..." then
             if _G.ApplySkin then
                 _G.ApplySkin(selectedSkin)
@@ -107,7 +104,6 @@ local SkinSelector = Tab:AddDropdown({
     end     
 })
 
--- Функция ожидания базы (оставляем без изменений, она норм)
 task.spawn(function()
     local timeout = 0
     while not _G.SkinNames and timeout < 15 do
@@ -122,28 +118,23 @@ task.spawn(function()
     end
 end)
 
--- Переключатель (Toggle)
 Tab:AddToggle({
     Name = "Change skin",
     Default = false,
     Callback = function(Value)
-        -- Используем ту же переменную, что и в базе данных
         _G.IsSkinActive = Value 
+		_G.CurrentSkinName = selectedSkin
         
         if Value then
-            -- Проверяем, выбран ли скин и загружена ли функция
             if selectedSkin and selectedSkin ~= "None" and selectedSkin ~= "Загрузка..." and selectedSkin ~= "" then
                 if _G.ApplySkin then
                     _G.ApplySkin(selectedSkin)
                 end
             else
-                -- Если скин не выбран, выключаем Toggle обратно, чтобы не забагалось
                 warn("Скин не выбран! Выберите скин из списка.")
-                -- Если твоя библиотека поддерживает программное выключение, можно добавить его тут
                 _G.IsSkinActive = false 
             end
         else
-            -- Если выключили - возвращаем оригинал
             if _G.RestoreOriginal then
                 _G.RestoreOriginal()
             end
