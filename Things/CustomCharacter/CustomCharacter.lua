@@ -1,7 +1,6 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 
--- Функция для безопасного получения персонажа в любой момент
 local function getChar()
     return player.Character or player.CharacterAdded:Wait()
 end
@@ -9,10 +8,10 @@ end
 _G.OriginalAppearance = nil
 _G.Skins = {
     ["Skin1test"] = {
-        Headless = false, -- false, так как мы ставим свою голову
+        Headless = false,
         CustomHead = {
             MeshId = "rbxassetid://129985527653392",
-            TextureId = "rbxassetid://140448396622170", -- если текстуры нет, оставь ""
+            TextureId = "rbxassetid://140448396622170",
         },
         Korblox = true,
         BodyColors = {
@@ -33,7 +32,7 @@ _G.Skins = {
         }
     },
     ["Skin2test"] = {
-        Headless = true, -- false, так как мы ставим свою голову
+        Headless = true,
         Korblox = true,
         BodyColors = {
             HeadColor3 = Color3.fromRGB(253, 255, 218),
@@ -147,21 +146,18 @@ _G.Skins = {
     }
 }
 
--- Создаем список имен СРАЗУ
 _G.SkinNames = {}
 for name, _ in pairs(_G.Skins) do
     table.insert(_G.SkinNames, name)
 end
 
-_G.IsSkinActive = false -- По умолчанию выключен
+_G.IsSkinActive = false
 
 _G.SaveOriginal = function()
-    -- Если мы уже сохранили скин один раз за сессию, больше не трогаем.
     if _G.OriginalAppearance ~= nil then return end 
 
     local char = getChar()
     
-    -- Ждем секунду, чтобы персонаж точно прогрузился (важно при заходе)
     if not char:FindFirstChild("AppearanceRoot") and not char:FindFirstChildOfClass("Accessory") then
         task.wait(1) 
     end
@@ -175,10 +171,8 @@ _G.SaveOriginal = function()
         Pants = nil
     }
     
-    -- СОХРАНЯЕМ ВСЁ СРАЗУ
     for _, obj in ipairs(char:GetChildren()) do
         if obj:IsA("Accessory") then
-            -- Клонируем и сразу прячем в надежное место (в nil)
             local clone = obj:Clone()
             if clone then
                 clone.Parent = nil 
@@ -193,7 +187,6 @@ _G.SaveOriginal = function()
         end
     end
 
-    -- Сохраняем лицо и голову, чтобы не быть серым кубом
     local head = char:FindFirstChild("Head")
     if head then
         local face = head:FindFirstChild("face")
@@ -213,20 +206,17 @@ end
 local function clearCharacter()
     local char = getChar()
     for _, obj in ipairs(char:GetChildren()) do
-        -- Удаляем только визуальные вещи, не трогаем части тела
         if obj:IsA("Accessory") or obj:IsA("Shirt") or obj:IsA("Pants") or obj:IsA("BodyColors") or obj:IsA("CharacterMesh") then
             obj:Destroy()
         end
     end
     
     if char:FindFirstChild("Head") then
-        -- Удаляем только кастомные меши, чтобы голова не исчезла
         for _, hObj in ipairs(char.Head:GetChildren()) do
             if hObj:IsA("SpecialMesh") or hObj.Name == "Mesh" then
                 hObj:Destroy()
             end
         end
-        -- Лицо просто делаем невидимым
         local face = char.Head:FindFirstChild("face")
         if face then face.Transparency = 1 end 
     end
@@ -243,16 +233,13 @@ _G.ApplySkin = function(skinName)
         return 
     end
     
-    -- 1. Сначала сохраняем оригинал (пока персонаж еще в своей одежде)
     _G.SaveOriginal()
     
-    -- 2. Ставим отметку, что кастомный скин активирован
     _G.IsSkinActive = true
 
     local char = getChar()
     clearCharacter()
 
-    -- Тело (BodyColors)
     local bc = Instance.new("BodyColors", char)
     if data.BodyColors then
         for prop, color in pairs(data.BodyColors) do
@@ -260,11 +247,9 @@ _G.ApplySkin = function(skinName)
         end
     end
 
-    -- Одежда
     if data.Shirt then Instance.new("Shirt", char).ShirtTemplate = data.Shirt end
     if data.Pants then Instance.new("Pants", char).PantsTemplate = data.Pants end
 
-    -- ЛОГИКА ГОЛОВЫ
     if char:FindFirstChild("Head") then
         local head = char.Head
         
@@ -282,16 +267,13 @@ _G.ApplySkin = function(skinName)
         end
     end
 
-    -- Ноги (Korblox) - ИСПРАВЛЕНО: добавлена поддержка цвета тела
     if data.Korblox then
         local mesh = Instance.new("CharacterMesh", char)
         mesh.BodyPart = Enum.BodyPart.RightLeg
         mesh.MeshId = 101851696
-        -- Чтобы нога не была просто серой/пустой, используем BaseTextureId = 0
         mesh.BaseTextureId = 0 
     end
 
-    -- Аксессуары
     if data.Accessories then
         local function toCFrame(cfData)
             if not cfData then return CFrame.new() end
@@ -342,12 +324,10 @@ _G.RestoreOriginal = function()
     clearCharacter() 
     
     if _G.OriginalAppearance then
-        -- 1. Цвета тела
         if _G.OriginalAppearance.BodyColors then
             _G.OriginalAppearance.BodyColors:Clone().Parent = char
         end
         
-        -- 2. Одежда
         if _G.OriginalAppearance.Shirt then
             local s = Instance.new("Shirt", char)
             s.ShirtTemplate = _G.OriginalAppearance.Shirt
@@ -357,20 +337,16 @@ _G.RestoreOriginal = function()
             p.PantsTemplate = _G.OriginalAppearance.Pants
         end
 
-        -- 3. Аксессуары
         for _, acc in ipairs(_G.OriginalAppearance.Items) do
             if acc and acc:IsA("Accessory") then
                 acc:Clone().Parent = char
             end
         end
         
-        -- 4. Голова и Лицо
         if char:FindFirstChild("Head") then
-            -- Возвращаем меш головы
             if _G.OriginalAppearance.HeadMesh then
                 _G.OriginalAppearance.HeadMesh:Clone().Parent = char.Head
             end
-            -- Возвращаем лицо
             local face = char.Head:FindFirstChild("face")
             if face then
                 face.Transparency = 0
@@ -378,8 +354,6 @@ _G.RestoreOriginal = function()
             end
         end
         
-        -- КРИТИЧЕСКАЯ ПРАВКА: Очищаем таблицу, чтобы при следующем 
-        -- включении SaveOriginal сработал заново!
         _G.OriginalAppearance = nil 
     end
     print("--- ПЕРСОНАЖ ВОССТАНОВЛЕН И ПАМЯТЬ ОЧИЩЕНА ---")
