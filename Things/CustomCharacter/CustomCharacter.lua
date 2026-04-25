@@ -186,6 +186,13 @@ _G.Skins = {
             MeshId = "rbxassetid://115355460861394",
             TextureId = "rbxassetid://76689256681394",
         },
+        BodyScales = {
+        ["BodyHeightScale"] = 0.8999999761581421,
+        ["BodyWidthScale"] = 0.699999988079071,
+        ["BodyDepthScale"] = 0.8500000238418579,
+        ["HeadScale"] = 1,
+        ["BodyTypeScale"] = 0,
+    },
         R6BodyMeshes = {
             ["LeftArm"] = { MeshId = 83001137 },
             ["RightArm"] = { MeshId = 83001181 },
@@ -430,25 +437,29 @@ _G.ApplySkin = function(skinName)
         end
     end
 
-    -- 4. ПРИМЕНЕНИЕ МЕШЕЙ ТЕЛА (R6 vs R15)
     if isR15 then
-        -- Логика для R15: ищем части тела и меняем ID в MeshPart
+        if data.BodyScales then
+            for scaleName, value in pairs(data.BodyScales) do
+                local scaleValue = humanoid:FindFirstChild(scaleName)
+                if scaleValue and scaleValue:IsA("NumberValue") then
+                    scaleValue.Value = value
+                end
+            end
+        end
+
         if data.R15BodyMeshes then
             for partName, meshInfo in pairs(data.R15BodyMeshes) do
                 local part = char:FindFirstChild(partName)
                 if part and part:IsA("MeshPart") then
                     pcall(function()
+                        -- Устанавливаем меш и текстуру
                         part.MeshId = tostring(meshInfo.MeshId)
-                        if meshInfo.TextureId then
-                            part.TextureID = tostring(meshInfo.TextureId)
-                        end
+                        part.TextureID = tostring(meshInfo.TextureId or "")
                     end)
                 end
             end
         end
     else
-        -- Логика для R6: используем CharacterMesh
-        -- Проверяем R6BodyMeshes, если пусто — берем старый BodyMeshes для совместимости
         local r6Data = data.R6BodyMeshes or data.BodyMeshes 
         if r6Data then
             local partMapping = {
@@ -472,7 +483,6 @@ _G.ApplySkin = function(skinName)
             end
         end
         
-        -- Спец. проверка Korblox для R6
         if data.Korblox and not (r6Data and r6Data.RightLeg) then
             local mesh = Instance.new("CharacterMesh", char)
             mesh.BodyPart = Enum.BodyPart.RightLeg
