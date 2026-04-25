@@ -184,6 +184,10 @@ _G.Skins = {
     ["Cool Rich Girl"] = {
         Headless = false,
         Korblox = false,
+        CustomHead = {
+            MeshId = "rbxassetid://115355460861394",
+            TextureId = "rbxassetid://76689256681394",
+        },
         R6BodyMeshes = {
         ["LeftArm"]  = { MeshId = 83001137 },
         ["RightArm"] = { MeshId = 83001181 },
