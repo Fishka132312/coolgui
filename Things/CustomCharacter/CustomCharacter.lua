@@ -471,22 +471,47 @@ _G.ApplySkin = function(skinName)
     if char:FindFirstChild("Head") then
         local head = char.Head
         
-        -- Убираем лицо, если активен скин
+        -- Скрываем стандартное лицо
         local face = head:FindFirstChild("face")
         if face then face.Transparency = 1 end
 
+        -- Очищаем старые кастомные меши, если они были
+        for _, oldObj in ipairs(head:GetChildren()) do
+            if oldObj:IsA("SpecialMesh") then
+                oldObj:Destroy()
+            end
+        end
+
+        -- Если это R15, делаем саму деталь головы прозрачной (иначе меш наложится поверх)
+        if isR15 then
+            if data.Headless or data.CustomHead then
+                head.Transparency = 1
+            else
+                head.Transparency = 0 -- Возвращаем видимость, если голова обычная
+            end
+        end
+
         if data.Headless then
+            -- Применяем Headless (нулевой масштаб меша)
             local m = Instance.new("SpecialMesh", head)
             m.Name = "HeadlessMesh"
             m.MeshId = "http://www.roblox.com/asset/?id=134079402"
             m.TextureId = "http://www.roblox.com/asset/?id=133940918"
             m.Scale = Vector3.new(0, 0, 0)
         elseif data.CustomHead then
+            -- Применяем кастомную голову
             local m = Instance.new("SpecialMesh", head)
-            m.Name = "Mesh"
+            m.Name = "CustomMesh"
             m.MeshId = data.CustomHead.MeshId
             m.TextureId = data.CustomHead.TextureId or ""
-            m.Scale = data.CustomHead.Scale or Vector3.new(1, 1, 1)
+            
+            -- Настройка масштаба: для R15 головы часто требуют чуть больше размера (напр. 1.2)
+            if data.CustomHead.Scale then
+                m.Scale = data.CustomHead.Scale
+            else
+                m.Scale = isR15 and Vector3.new(1.2, 1.2, 1.2) or Vector3.new(1, 1, 1)
+            end
+            
             m.Offset = data.CustomHead.Offset or Vector3.new(0, 0, 0)
         end
     end
