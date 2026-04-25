@@ -153,20 +153,36 @@ for name, _ in pairs(_G.Skins) do
     table.insert(_G.SkinNames, name)
 end
 
+_G.IsSkinActive = false -- По умолчанию выключен
+
 _G.SaveOriginal = function()
-    if _G.OriginalAppearance then return end
+    -- Если кастомный скин уже активен, НЕ перезаписываем, 
+    -- чтобы случайно не сохранить кастомные вещи как "родные".
+    if _G.IsSkinActive then return end 
+
     local char = getChar()
-    _G.OriginalAppearance = {}
+    _G.OriginalAppearance = {} -- Очищаем старую таблицу и создаем новую
     
+    -- Сохраняем все элементы внешности
     for _, obj in ipairs(char:GetChildren()) do
         if obj:IsA("Accessory") or obj:IsA("Shirt") or obj:IsA("Pants") or obj:IsA("BodyColors") or obj:IsA("CharacterMesh") then
             table.insert(_G.OriginalAppearance, obj:Clone())
         end
     end
-    -- Сохраняем меш головы (SpecialMesh или Mesh)
+
+    -- Сохраняем меш головы и лицо
     if char:FindFirstChild("Head") then
+        -- Сохраняем меш (чтобы вернуть форму головы)
         local m = char.Head:FindFirstChildOfClass("SpecialMesh") or char.Head:FindFirstChild("Mesh")
-        if m then _G.OriginalAppearance.HeadMesh = m:Clone() end
+        if m then 
+            _G.OriginalAppearance.HeadMesh = m:Clone() 
+        end
+        
+        -- Запоминаем текстуру лица (чтобы не потерять твоё лицо при возврате)
+        local face = char.Head:FindFirstChild("face")
+        if face then
+            _G.OriginalAppearance.FaceTexture = face.Texture
+        end
     end
 end
 
@@ -200,11 +216,16 @@ _G.ApplySkin = function(skinName)
         return 
     end
     
-    local char = getChar()
+    -- 1. Сначала сохраняем оригинал (пока персонаж еще в своей одежде)
     _G.SaveOriginal()
+    
+    -- 2. Ставим отметку, что кастомный скин активирован
+    _G.IsSkinActive = true
+
+    local char = getChar()
     clearCharacter()
 
-    -- Тело
+    -- Тело (BodyColors)
     local bc = Instance.new("BodyColors", char)
     if data.BodyColors then
         for prop, color in pairs(data.BodyColors) do
@@ -225,7 +246,6 @@ _G.ApplySkin = function(skinName)
             m.MeshId = "http://www.roblox.com/asset/?id=134079402"
             m.TextureId = "http://www.roblox.com/asset/?id=133940918"
         elseif data.CustomHead then
-            -- Создаем новую голову по твоим параметрам
             local m = Instance.new("SpecialMesh", head)
             m.Name = "Mesh"
             m.MeshId = data.CustomHead.MeshId
@@ -235,17 +255,17 @@ _G.ApplySkin = function(skinName)
         end
     end
 
-    -- Ноги (Korblox)
+    -- Ноги (Korblox) - ИСПРАВЛЕНО: добавлена поддержка цвета тела
     if data.Korblox then
         local mesh = Instance.new("CharacterMesh", char)
         mesh.BodyPart = Enum.BodyPart.RightLeg
         mesh.MeshId = 101851696
-        mesh.OverlayTextureId = 101851254
+        -- Чтобы нога не была просто серой/пустой, используем BaseTextureId = 0
+        mesh.BaseTextureId = 0 
     end
 
     -- Аксессуары
-  if data.Accessories then
-        -- Выносим вспомогательную функцию, чтобы не нагружать цикл
+    if data.Accessories then
         local function toCFrame(cfData)
             if not cfData then return CFrame.new() end
             if typeof(cfData) == "CFrame" then return cfData end
@@ -268,7 +288,6 @@ _G.ApplySkin = function(skinName)
             mesh.TextureId = accData.TextureId
             mesh.Scale = accData.Scale or Vector3.new(1, 1, 1)
             
-            -- Определяем часть тела (ParentPart или по умолчанию Head)
             local targetName = accData.ParentPart or "Head"
             local targetPart = char:FindFirstChild(targetName)
             
@@ -278,7 +297,6 @@ _G.ApplySkin = function(skinName)
                 weld.Part0 = handle
                 weld.Part1 = targetPart
                 
-                -- Применяем координаты через безопасную функцию
                 weld.C0 = toCFrame(accData.C0)
                 weld.C1 = toCFrame(accData.C1)
                 
@@ -292,22 +310,43 @@ end
 
 _G.RestoreOriginal = function()
     local char = getChar()
-    clearCharacter()
+    
+    -- Указываем базе, что кастомный скин больше не активен
+    _G.IsSkinActive = false 
+    
+    -- Полностью очищаем персонажа от кастомных вещей
+    clearCharacter() 
+    
     if _G.OriginalAppearance then
+        -- Возвращаем все сохраненные вещи (одежду, аксессуары и т.д.)
         for _, obj in pairs(_G.OriginalAppearance) do
             if typeof(obj) == "Instance" then
                 obj:Clone().Parent = char
             end
         end
+        
         -- Возвращаем родную голову и лицо
         if char:FindFirstChild("Head") then
+            -- Если был сохранен меш головы, возвращаем его
             if _G.OriginalAppearance.HeadMesh then
                 _G.OriginalAppearance.HeadMesh:Clone().Parent = char.Head
             end
+            
+            -- Делаем лицо снова видимым
             local face = char.Head:FindFirstChild("face")
-            if face then face.Transparency = 0 end
+            if face then 
+                face.Transparency = 0 
+                -- Если сохраняли текстуру лица, можно вернуть и её
+                if _G.OriginalAppearance.FaceID then
+                    face.Texture = _G.OriginalAppearance.FaceID
+                end
+            end
         end
     end
+    
+    -- ВАЖНО: Удаляем данные о старом виде. 
+    -- Теперь при следующем ApplySkin скрипт сделает НОВЫЙ снимок персонажа.
+    _G.OriginalAppearance = nil 
 end
 
 print("Skin Database Loaded Successfully!")
