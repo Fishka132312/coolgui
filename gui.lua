@@ -29,6 +29,7 @@ task.spawn(function()
     end
 end)
 
+
 -------------------------Shader---------------------------
 
 local Tab = Window:MakeTab({
@@ -86,22 +87,27 @@ local Section = Tab:AddSection({
 	Name = "Free Skins"
 })
 
-local selectedSkin = "None" -- Изначально ничего не выбрано
+local selectedSkin = "None" 
 
+-- 1. Дропдаун выбора скина
 local SkinSelector = Tab:AddDropdown({
     Name = "Выберите скин",
     Default = "None",
     Options = {"Загрузка..."},
     Callback = function(Value)
         selectedSkin = Value
-        -- ИСПРАВЛЕНО: Проверяем _G.IsSkinActive
-        if _G.ApplySkin and _G.IsSkinActive and selectedSkin ~= "None" then
-            _G.ApplySkin(selectedSkin)
+        
+        -- Если скин уже активирован (Toggle включен), то при смене скина в списке
+        -- он должен сразу переодеваться
+        if _G.IsSkinActive and selectedSkin ~= "None" and selectedSkin ~= "Загрузка..." then
+            if _G.ApplySkin then
+                _G.ApplySkin(selectedSkin)
+            end
         end
     end     
 })
 
--- Функция ожидания базы данных
+-- Функция ожидания базы (оставляем без изменений, она норм)
 task.spawn(function()
     local timeout = 0
     while not _G.SkinNames and timeout < 15 do
@@ -110,11 +116,9 @@ task.spawn(function()
     end
 
     if _G.SkinNames and #_G.SkinNames > 0 then
-        -- Просто обновляем список доступных скинов, НО НЕ выбираем их автоматически
         SkinSelector:Refresh(_G.SkinNames, true)
-        print("Список скинов загружен.")
     else
-        SkinSelector:Refresh({"Ошибка: База пуста"}, true)
+        SkinSelector:Refresh({"Ошибка базы"}, true)
     end
 end)
 
