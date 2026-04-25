@@ -2,10 +2,9 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local character = player.Character or player.CharacterAdded:Wait()
 
-local originalAppearance = nil
-local selectedSkin = nil
-
-local skins = {
+-- Используем глобальную таблицу _G, чтобы данные были видны в других скриптах
+_G.OriginalAppearance = nil
+_G.Skins = {
     ["Skin1test"] = {
         Headless = true,
         Korblox = true,
@@ -32,28 +31,35 @@ local skins = {
     ["GigaChad"] = {
         Headless = false,
         Korblox = false,
+        BodyColors = {
+            HeadColor3 = Color3.fromRGB(163, 162, 165),
+            TorsoColor3 = Color3.fromRGB(163, 162, 165),
+        }
     }
 }
 
-local skinNames = {}
-for name, _ in pairs(skins) do
-    table.insert(skinNames, name)
+-- Автоматический список имен для Dropdown
+_G.SkinNames = {}
+for name, _ in pairs(_G.Skins) do
+    table.insert(_G.SkinNames, name)
 end
 
-local function saveOriginal()
-    if originalAppearance then return end
-    originalAppearance = {}
+-- Функция сохранения оригинала
+_G.SaveOriginal = function()
+    if _G.OriginalAppearance then return end
+    _G.OriginalAppearance = {}
     
     for _, obj in ipairs(character:GetChildren()) do
         if obj:IsA("Accessory") or obj:IsA("Shirt") or obj:IsA("Pants") or obj:IsA("BodyColors") or obj:IsA("CharacterMesh") then
-            table.insert(originalAppearance, obj:Clone())
+            table.insert(_G.OriginalAppearance, obj:Clone())
         end
     end
     if character:FindFirstChild("Head") and character.Head:FindFirstChild("Mesh") then
-        originalAppearance.HeadMesh = character.Head.Mesh:Clone()
+        _G.OriginalAppearance.HeadMesh = character.Head.Mesh:Clone()
     end
 end
 
+-- Функция очистки
 local function clearCharacter()
     for _, obj in ipairs(character:GetChildren()) do
         if obj:IsA("Accessory") or obj:IsA("Shirt") or obj:IsA("Pants") or obj:IsA("BodyColors") or obj:IsA("CharacterMesh") then
@@ -62,11 +68,12 @@ local function clearCharacter()
     end
 end
 
-local function applySkin(skinName)
-    local data = skins[skinName]
+-- Глобальная функция применения скина
+_G.ApplySkin = function(skinName)
+    local data = _G.Skins[skinName]
     if not data then return end
     
-    saveOriginal()
+    _G.SaveOriginal()
     clearCharacter()
 
     local bc = Instance.new("BodyColors", character)
@@ -104,7 +111,6 @@ local function applySkin(skinName)
         for _, accData in ipairs(data.Accessories) do
             local acc = Instance.new("Accessory")
             acc.Name = accData.Name
-            
             local handle = Instance.new("Part", acc)
             handle.Name = "Handle"
             
@@ -112,9 +118,8 @@ local function applySkin(skinName)
             mesh.MeshId = accData.MeshId
             mesh.TextureId = accData.TextureId
             
-            local origSize = Instance.new("Vector3Value", handle)
-            origSize.Name = "OriginalSize"
-            origSize.Value = Vector3.new(1, 1, 1)
+            Instance.new("Vector3Value", handle).Name = "OriginalSize"
+            handle.OriginalSize.Value = Vector3.new(1, 1, 1)
             
             local partScale = Instance.new("StringValue", handle)
             partScale.Name = "AvatarPartScaleType"
@@ -132,17 +137,20 @@ local function applySkin(skinName)
     end
 end
 
-local function restoreOriginal()
+-- Глобальная функция возврата оригинала
+_G.RestoreOriginal = function()
     clearCharacter()
-    if originalAppearance then
-        for _, obj in ipairs(originalAppearance) do
-            if not obj:IsA("SpecialMesh") then
+    if _G.OriginalAppearance then
+        for _, obj in pairs(_G.OriginalAppearance) do
+            if typeof(obj) == "Instance" and not obj:IsA("SpecialMesh") then
                 obj:Clone().Parent = character
             end
         end
-        if originalAppearance.HeadMesh and character:FindFirstChild("Head") then
-            character.Head.Mesh:Destroy()
-            originalAppearance.HeadMesh:Clone().Parent = character.Head
+        if _G.OriginalAppearance.HeadMesh and character:FindFirstChild("Head") then
+            if character.Head:FindFirstChild("Mesh") then character.Head.Mesh:Destroy() end
+            _G.OriginalAppearance.HeadMesh:Clone().Parent = character.Head
         end
     end
 end
+
+print("Skin Database Loaded!")
