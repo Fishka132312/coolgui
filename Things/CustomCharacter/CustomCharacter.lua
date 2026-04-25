@@ -410,7 +410,7 @@ _G.ApplySkin = function(skinName)
     clearCharacter()
 
     -- 1. Настройка цветов тела
-    local bc = Instance.new("BodyColors", char)
+    local bc = char:FindFirstChildOfClass("BodyColors") or Instance.new("BodyColors", char)
     if data.BodyColors then
         for prop, color in pairs(data.BodyColors) do
             pcall(function() bc[prop] = color end)
@@ -418,18 +418,24 @@ _G.ApplySkin = function(skinName)
     end
 
     -- 2. Настройка одежды
-    if data.Shirt then Instance.new("Shirt", char).ShirtTemplate = data.Shirt end
-    if data.Pants then Instance.new("Pants", char).PantsTemplate = data.Pants end
+    if data.Shirt then 
+        local s = char:FindFirstChildOfClass("Shirt") or Instance.new("Shirt", char)
+        s.ShirtTemplate = data.Shirt 
+    end
+    if data.Pants then 
+        local p = char:FindFirstChildOfClass("Pants") or Instance.new("Pants", char)
+        p.PantsTemplate = data.Pants 
+    end
 
     -- 3. Настройка головы (Headless или Custom)
     if char:FindFirstChild("Head") then
         local head = char.Head
         if data.Headless then
-            local m = Instance.new("SpecialMesh", head)
+            local m = head:FindFirstChildOfClass("SpecialMesh") or Instance.new("SpecialMesh", head)
             m.MeshId = "http://www.roblox.com/asset/?id=134079402"
             m.TextureId = "http://www.roblox.com/asset/?id=133940918"
         elseif data.CustomHead then
-            local m = Instance.new("SpecialMesh", head)
+            local m = head:FindFirstChildOfClass("SpecialMesh") or Instance.new("SpecialMesh", head)
             m.Name = "Mesh"
             m.MeshId = data.CustomHead.MeshId
             m.TextureId = data.CustomHead.TextureId or ""
@@ -438,58 +444,79 @@ _G.ApplySkin = function(skinName)
         end
     end
 
+    -- 4. Применение мешей, размеров и сброс рига
     if isR15 then
-        if data.BodyScales then
-            for scaleName, value in pairs(data.BodyScales) do
-                local scaleValue = humanoid:FindFirstChild(scaleName)
-                if scaleValue and scaleValue:IsA("NumberValue") then
-                    scaleValue.Value = value
+        -- [ХАК] Временно отключаем Humanoid для корректного обновления суставов (Motor6D)
+        local oldState = humanoid.RequiresNeck
+        humanoid.RequiresNeck = false
+        humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+        humanoid.Enabled = false
+        task.wait(0.05) 
+
+        -- Применяем Scales (Рост, Ширина и т.д.)
+        local defaultScales = {
+            BodyTypeScale = 0, BodyProportionScale = 0, BodyWidthScale = 1, 
+            BodyHeightScale = 1, BodyDepthScale = 1, HeadScale = 1
+        }
+        for name, defVal in pairs(defaultScales) do
+            local s = humanoid:FindFirstChild(name)
+            if s then s.Value = (data.BodyScales and data.BodyScales[name]) or defVal end
+        end
+
+        -- Применяем R15 меши и их физические размеры
+        if data.R15BodyMeshes then
+            for partName, info in pairs(data.R15BodyMeshes) do
+                local part = char:FindFirstChild(partName)
+                if part then
+                    -- Если это голова, проверяем SpecialMesh внутри
+                    if partName == "Head" then
+                        local sm = part:FindFirstChildOfClass("SpecialMesh")
+                        if sm then
+                            sm.MeshId = info.MeshId
+                            sm.TextureId = info.TextureId or ""
+                        elseif part:IsA("MeshPart") then
+                            pcall(function() part.MeshId = info.MeshId end)
+                        end
+                    elseif part:IsA("MeshPart") then
+                        pcall(function()
+                            part.MeshId = info.MeshId
+                            part.TextureID = info.TextureId or ""
+                        end)
+                    end
+                    
+                    -- КРИТИЧНО: Устанавливаем точный размер парта из дампа
+                    if info.Size then part.Size = info.Size end
                 end
             end
         end
 
-        if data.R15BodyMeshes then
-            for partName, meshInfo in pairs(data.R15BodyMeshes) do
-                local part = char:FindFirstChild(partName)
-                if part and part:IsA("MeshPart") then
-                    pcall(function()
-                        -- Устанавливаем меш и текстуру
-                        part.MeshId = tostring(meshInfo.MeshId)
-                        part.TextureID = tostring(meshInfo.TextureId or "")
-                    end)
-                end
-            end
-        end
+        task.wait(0.05) 
+
+        -- [ХАК] Включаем Humanoid обратно — это заставляет суставы пересобраться под новые размеры
+        humanoid.Enabled = true
+        humanoid.RequiresNeck = oldState
+        humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+        
+        -- Принудительный ребилд рига
+        pcall(function() humanoid:BuildRigFromAttachments() end)
     else
+        -- Логика для R6
         local r6Data = data.R6BodyMeshes or data.BodyMeshes 
         if r6Data then
             local partMapping = {
-                ["Torso"] = Enum.BodyPart.Torso,
-                ["LeftArm"] = Enum.BodyPart.LeftArm,
-                ["RightArm"] = Enum.BodyPart.RightArm,
-                ["LeftLeg"] = Enum.BodyPart.LeftLeg,
-                ["RightLeg"] = Enum.BodyPart.RightLeg,
-                ["Head"] = Enum.BodyPart.Head
+                ["Torso"] = Enum.BodyPart.Torso, ["LeftArm"] = Enum.BodyPart.LeftArm,
+                ["RightArm"] = Enum.BodyPart.RightArm, ["LeftLeg"] = Enum.BodyPart.LeftLeg,
+                ["RightLeg"] = Enum.BodyPart.RightLeg, ["Head"] = Enum.BodyPart.Head
             }
-
-            for partName, meshInfo in pairs(r6Data) do
-                local bodyPartEnum = partMapping[partName]
-                if bodyPartEnum and meshInfo.MeshId then
-                    local cm = Instance.new("CharacterMesh")
-                    cm.BodyPart = bodyPartEnum
-                    cm.MeshId = tostring(meshInfo.MeshId):gsub("%D", "") 
-                    cm.BaseTextureId = meshInfo.TextureId or 0
-                    cm.Parent = char
+            for pName, mInfo in pairs(r6Data) do
+                local bodyPart = partMapping[pName]
+                if bodyPart and mInfo.MeshId then
+                    local cm = Instance.new("CharacterMesh", char)
+                    cm.BodyPart = bodyPart
+                    cm.MeshId = tostring(mInfo.MeshId):gsub("%D", "") 
+                    cm.BaseTextureId = mInfo.TextureId or 0
                 end
             end
-        end
-        
-        if data.Korblox and not (r6Data and r6Data.RightLeg) then
-            local mesh = Instance.new("CharacterMesh", char)
-            mesh.BodyPart = Enum.BodyPart.RightLeg
-            mesh.MeshId = 101851696
-            mesh.BaseTextureId = 0 
-            mesh.OverlayTextureId = 101851254
         end
     end
 
@@ -517,9 +544,7 @@ _G.ApplySkin = function(skinName)
             mesh.TextureId = accData.TextureId
             mesh.Scale = accData.Scale or Vector3.new(1, 1, 1)
             
-            local targetName = accData.ParentPart or "Head"
-            local targetPart = char:FindFirstChild(targetName)
-            
+            local targetPart = char:FindFirstChild(accData.ParentPart or "Head")
             if targetPart then
                 local weld = Instance.new("Weld", handle)
                 weld.Name = "AccessoryWeld"
@@ -528,8 +553,6 @@ _G.ApplySkin = function(skinName)
                 weld.C0 = toCFrame(accData.C0)
                 weld.C1 = toCFrame(accData.C1)
                 acc.Parent = char
-            else
-                warn("Ошибка: Часть тела " .. tostring(targetName) .. " не найдена для " .. accData.Name)
             end
         end
     end
