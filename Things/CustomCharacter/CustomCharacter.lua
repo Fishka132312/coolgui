@@ -51,7 +51,7 @@ _G.Skins = {
                 Name = "1",
                 MeshId = "rbxassetid://6544038046",
                 TextureId = "http://www.roblox.com/asset/?id=6544029865",
-                ParentPart = "Head",
+                ParentPart = "Torso",
                 C0 = CFrame.new(0.00788385514, 0.215940952, 0.00236511254, 1, 0, 0, 0, 0.999996841, -0.00250333641, 0, 0.00250333641, 0.999996841),
                 C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
             },
@@ -75,7 +75,7 @@ _G.Skins = {
                 Name = "4",
                 MeshId = "rbxassetid://7004527040",
                 TextureId = "rbxassetid://7004539074",
-                ParentPart = "Head",
+                ParentPart = "Torso",
                 C0 = CFrame.new(-0.00132751465, 0.172905982, -0.0212802887, -0.999999762, 0.000604254019, 0, 0.000604254019, 0.999999821, 0, 0, 0, -1),
                 C1 = CFrame.new(0, -1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
             },
@@ -123,7 +123,7 @@ _G.Skins = {
                 Name = "9",
                 MeshId = "rbxassetid://10432172130",
                 TextureId = "rbxassetid://10431957786",
-                ParentPart = "Head",
+                ParentPart = "Torso",
                 C0 = CFrame.new(-4.89909798e-05, 0.363111854, 0.0185300764, 1, 0, 0, 0, 1, 0, 0, 0, 1),
                 C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
             },
