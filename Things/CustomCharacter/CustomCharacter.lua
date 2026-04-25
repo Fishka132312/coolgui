@@ -134,6 +134,7 @@ _G.ApplySkin = function(skinName)
         local mesh = Instance.new("CharacterMesh", char)
         mesh.BodyPart = Enum.BodyPart.RightLeg
         mesh.MeshId = 101851696
+        mesh.OverlayTextureId = 101851254
     end
 
     -- Аксессуары
