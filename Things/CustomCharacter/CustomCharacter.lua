@@ -182,116 +182,88 @@ _G.Skins = {
     ["Cool Rich Girl"] = {
         Headless = false,
         Korblox = false,
-        CustomHead = {
-            MeshId = "rbxassetid://115355460861394",
-            TextureId = "rbxassetid://76689256681394",
-        },
-        BodyScales = {
-        ["BodyHeightScale"] = 0.8999999761581421,
-        ["BodyWidthScale"] = 0.699999988079071,
-        ["BodyDepthScale"] = 0.8500000238418579,
-        ["HeadScale"] = 1,
-        ["BodyTypeScale"] = 0,
+        Headless = false,
+    Korblox = false,
+    
+    -- Цвета кожи (оставляем, если нужно менять цвет тела под скин)
+    BodyColors = {
+        HeadColor3 = Color3.fromRGB(204, 142, 105),
+        TorsoColor3 = Color3.fromRGB(204, 142, 105),
+        LeftArmColor3 = Color3.fromRGB(204, 142, 105),
+        LeftLegColor3 = Color3.fromRGB(204, 142, 105),
+        RightArmColor3 = Color3.fromRGB(204, 142, 105),
+        RightLegColor3 = Color3.fromRGB(204, 142, 105),
     },
-        R6BodyMeshes = {
-            ["BodyTypeScale"] = 0,
-        ["BodyProportionScale"] = 0,
-        ["BodyWidthScale"] = 0.699999988079071,
-        ["BodyHeightScale"] = 0.8999999761581421,
-        ["BodyDepthScale"] = 0.8500000238418579,
-        ["HeadScale"] = 1,
+    
+    -- Одежда
+    Shirt = "http://www.roblox.com/asset/?id=6472288557",
+    Pants = "http://www.roblox.com/asset/?id=6066432764",
+    
+    -- Аксессуары (сумки, волосы, очки и т.д.)
+    Accessories = {
+        {
+            Name = "chicBowPursePink",
+            MeshId = "rbxassetid://6843422307",
+            TextureId = "rbxassetid://6843422345",
+            ParentPart = "Torso",
+            C0 = CFrame.new(0.387207031, 0.0957374573, -0.765258789, 0, 0, -1, 0, 1, 0, 1, 0, 0),
+            C1 = CFrame.new(0, 0, -0.5, 1, 0, 0, 0, 1, 0, 0, 0, 1),
         },
-        R15BodyMeshes = {
-        ["UpperTorso"]     = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174058" },
-        ["LowerTorso"]     = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174057" },
-        ["LeftUpperArm"]   = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174089" },
-        ["LeftLowerArm"]   = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174056" },
-        ["LeftHand"]       = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997173998" },
-        ["RightUpperArm"]  = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997173999" },
-        ["RightLowerArm"]  = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997173930" },
-        ["RightHand"]      = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997173932" },
-        ["LeftUpperLeg"]   = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997173925" },
-        ["LeftLowerLeg"]   = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997173927" },
-        ["LeftFoot"]       = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997173950" },
-        ["RightUpperLeg"]  = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174087" },
-        ["RightLowerLeg"]  = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174053" },
-        ["RightFoot"]      = { MeshId = "https://assetdelivery.roblox.com/v1/asset/?id=8997174055" },
-    },
-        BodyColors = {
-            HeadColor3 = Color3.fromRGB(204, 142, 105),
-            TorsoColor3 = Color3.fromRGB(204, 142, 105),
-            LeftArmColor3 = Color3.fromRGB(204, 142, 105),
-            LeftLegColor3 = Color3.fromRGB(204, 142, 105),
-            RightArmColor3 = Color3.fromRGB(204, 142, 105),
-            RightLegColor3 = Color3.fromRGB(204, 142, 105),
+        {
+            Name = "NewSideBangsCaramelAccessory",
+            MeshId = "rbxassetid://5945976587",
+            TextureId = "rbxassetid://6322812499",
+            ParentPart = "Head",
+            C0 = CFrame.new(-0.00221633911, -0.166851044, -0.286561489, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+            C1 = CFrame.new(0, 0, -0.600000024, 1, 0, 0, 0, 1, 0, 0, 0, 1),
         },
-        Shirt = "http://www.roblox.com/asset/?id=6472288557",
-        Pants = "http://www.roblox.com/asset/?id=6066432764",
-        Accessories = {
-            {
-                Name = "chicBowPursePink",
-                MeshId = "rbxassetid://6843422307",
-                TextureId = "rbxassetid://6843422345",
-                ParentPart = "Torso",
-                C0 = CFrame.new(0.387207031, 0.0957374573, -0.765258789, 0, 0, -1, 0, 1, 0, 1, 0, 0),
-                C1 = CFrame.new(0, 0, -0.5, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            },
-            {
-                Name = "NewSideBangsCaramelAccessory",
-                MeshId = "rbxassetid://5945976587",
-                TextureId = "rbxassetid://6322812499",
-                ParentPart = "Head",
-                C0 = CFrame.new(-0.00221633911, -0.166851044, -0.286561489, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-                C1 = CFrame.new(0, 0, -0.600000024, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            },
-            {
-                Name = "BandageAccessory",
-                MeshId = "rbxassetid://5699721463",
-                TextureId = "http://www.roblox.com/asset/?id=5699711147",
-                ParentPart = "Head",
-                C0 = CFrame.new(-0.000275611877, -0.0262117386, 0.597229004, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-                C1 = CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            },
-            {
-                Name = "BubblyPigtails",
-                MeshId = "rbxassetid://6633403700",
-                TextureId = "rbxassetid://6632272463",
-                ParentPart = "Head",
-                C0 = CFrame.new(-4.4408921e-16, 1.22000003, -0.130999997, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            },
-            {
-                Name = "FluffyEarringsAccessory",
-                MeshId = "rbxassetid://4632062805",
-                TextureId = "rbxassetid://4632070627",
-                ParentPart = "Head",
-                C0 = CFrame.new(0, 0.900715947, -0.00371140987, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            },
-            {
-                Name = "PinkBaddieSunniesAccessory",
-                MeshId = "rbxassetid://5582632117",
-                TextureId = "http://www.roblox.com/asset/?id=5582639653",
-                ParentPart = "Head",
-                C0 = CFrame.new(0.00819158554, -0.0284600258, 0.298658371, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            },
-            {
-                Name = "PearlArmbandAccessory",
-                MeshId = "rbxassetid://6714866689",
-                TextureId = "http://www.roblox.com/asset/?id=6714855730",
-                ParentPart = "Left Arm",
-                C0 = CFrame.new(0.0630722046, 0.448396206, -0.0439186096, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-                C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            },
-            {
-                Name = "WomansPearl",
-                MeshId = "rbxassetid://6471990108",
-                TextureId = "http://www.roblox.com/asset/?id=6471995247",
-                ParentPart = "Torso",
-                C0 = CFrame.new(0.000244140625, 0.252067804, 0.156005859, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-                C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
-            }
+        {
+            Name = "BandageAccessory",
+            MeshId = "rbxassetid://5699721463",
+            TextureId = "http://www.roblox.com/asset/?id=5699711147",
+            ParentPart = "Head",
+            C0 = CFrame.new(-0.000275611877, -0.0262117386, 0.597229004, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+            C1 = CFrame.new(0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+        },
+        {
+            Name = "BubblyPigtails",
+            MeshId = "rbxassetid://6633403700",
+            TextureId = "rbxassetid://6632272463",
+            ParentPart = "Head",
+            C0 = CFrame.new(-4.4408921e-16, 1.22000003, -0.130999997, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+            C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+        },
+        {
+            Name = "FluffyEarringsAccessory",
+            MeshId = "rbxassetid://4632062805",
+            TextureId = "rbxassetid://4632070627",
+            ParentPart = "Head",
+            C0 = CFrame.new(0, 0.900715947, -0.00371140987, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+            C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+        },
+        {
+            Name = "PinkBaddieSunniesAccessory",
+            MeshId = "rbxassetid://5582632117",
+            TextureId = "http://www.roblox.com/asset/?id=5582639653",
+            ParentPart = "Head",
+            C0 = CFrame.new(0.00819158554, -0.0284600258, 0.298658371, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+            C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+        },
+        {
+            Name = "PearlArmbandAccessory",
+            MeshId = "rbxassetid://6714866689",
+            TextureId = "http://www.roblox.com/asset/?id=6714855730",
+            ParentPart = "Left Arm",
+            C0 = CFrame.new(0.0630722046, 0.448396206, -0.0439186096, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+            C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+        },
+        {
+            Name = "WomansPearl",
+            MeshId = "rbxassetid://6471990108",
+            TextureId = "http://www.roblox.com/asset/?id=6471995247",
+            ParentPart = "Torso",
+            C0 = CFrame.new(0.000244140625, 0.252067804, 0.156005859, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+            C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1),
         }
     }
 }
@@ -410,7 +382,7 @@ _G.ApplySkin = function(skinName)
     clearCharacter()
 
     -- 1. Настройка цветов тела
-    local bc = char:FindFirstChildOfClass("BodyColors") or Instance.new("BodyColors", char)
+    local bc = Instance.new("BodyColors", char)
     if data.BodyColors then
         for prop, color in pairs(data.BodyColors) do
             pcall(function() bc[prop] = color end)
@@ -418,24 +390,18 @@ _G.ApplySkin = function(skinName)
     end
 
     -- 2. Настройка одежды
-    if data.Shirt then 
-        local s = char:FindFirstChildOfClass("Shirt") or Instance.new("Shirt", char)
-        s.ShirtTemplate = data.Shirt 
-    end
-    if data.Pants then 
-        local p = char:FindFirstChildOfClass("Pants") or Instance.new("Pants", char)
-        p.PantsTemplate = data.Pants 
-    end
+    if data.Shirt then Instance.new("Shirt", char).ShirtTemplate = data.Shirt end
+    if data.Pants then Instance.new("Pants", char).PantsTemplate = data.Pants end
 
     -- 3. Настройка головы (Headless или Custom)
     if char:FindFirstChild("Head") then
         local head = char.Head
         if data.Headless then
-            local m = head:FindFirstChildOfClass("SpecialMesh") or Instance.new("SpecialMesh", head)
+            local m = Instance.new("SpecialMesh", head)
             m.MeshId = "http://www.roblox.com/asset/?id=134079402"
             m.TextureId = "http://www.roblox.com/asset/?id=133940918"
         elseif data.CustomHead then
-            local m = head:FindFirstChildOfClass("SpecialMesh") or Instance.new("SpecialMesh", head)
+            local m = Instance.new("SpecialMesh", head)
             m.Name = "Mesh"
             m.MeshId = data.CustomHead.MeshId
             m.TextureId = data.CustomHead.TextureId or ""
@@ -444,83 +410,7 @@ _G.ApplySkin = function(skinName)
         end
     end
 
-    -- 4. Применение мешей, размеров и сброс рига
-    if isR15 then
-        -- [ХАК] Временно отключаем Humanoid для корректного обновления суставов (Motor6D)
-        local oldState = humanoid.RequiresNeck
-        humanoid.RequiresNeck = false
-        humanoid:ChangeState(Enum.HumanoidStateType.Physics)
-        humanoid.Enabled = false
-        task.wait(0.05) 
-
-        -- Применяем Scales (Рост, Ширина и т.д.)
-        local defaultScales = {
-            BodyTypeScale = 0, BodyProportionScale = 0, BodyWidthScale = 1, 
-            BodyHeightScale = 1, BodyDepthScale = 1, HeadScale = 1
-        }
-        for name, defVal in pairs(defaultScales) do
-            local s = humanoid:FindFirstChild(name)
-            if s then s.Value = (data.BodyScales and data.BodyScales[name]) or defVal end
-        end
-
-        -- Применяем R15 меши и их физические размеры
-        if data.R15BodyMeshes then
-            for partName, info in pairs(data.R15BodyMeshes) do
-                local part = char:FindFirstChild(partName)
-                if part then
-                    -- Если это голова, проверяем SpecialMesh внутри
-                    if partName == "Head" then
-                        local sm = part:FindFirstChildOfClass("SpecialMesh")
-                        if sm then
-                            sm.MeshId = info.MeshId
-                            sm.TextureId = info.TextureId or ""
-                        elseif part:IsA("MeshPart") then
-                            pcall(function() part.MeshId = info.MeshId end)
-                        end
-                    elseif part:IsA("MeshPart") then
-                        pcall(function()
-                            part.MeshId = info.MeshId
-                            part.TextureID = info.TextureId or ""
-                        end)
-                    end
-                    
-                    -- КРИТИЧНО: Устанавливаем точный размер парта из дампа
-                    if info.Size then part.Size = info.Size end
-                end
-            end
-        end
-
-        task.wait(0.05) 
-
-        -- [ХАК] Включаем Humanoid обратно — это заставляет суставы пересобраться под новые размеры
-        humanoid.Enabled = true
-        humanoid.RequiresNeck = oldState
-        humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
-        
-        -- Принудительный ребилд рига
-        pcall(function() humanoid:BuildRigFromAttachments() end)
-    else
-        -- Логика для R6
-        local r6Data = data.R6BodyMeshes or data.BodyMeshes 
-        if r6Data then
-            local partMapping = {
-                ["Torso"] = Enum.BodyPart.Torso, ["LeftArm"] = Enum.BodyPart.LeftArm,
-                ["RightArm"] = Enum.BodyPart.RightArm, ["LeftLeg"] = Enum.BodyPart.LeftLeg,
-                ["RightLeg"] = Enum.BodyPart.RightLeg, ["Head"] = Enum.BodyPart.Head
-            }
-            for pName, mInfo in pairs(r6Data) do
-                local bodyPart = partMapping[pName]
-                if bodyPart and mInfo.MeshId then
-                    local cm = Instance.new("CharacterMesh", char)
-                    cm.BodyPart = bodyPart
-                    cm.MeshId = tostring(mInfo.MeshId):gsub("%D", "") 
-                    cm.BaseTextureId = mInfo.TextureId or 0
-                end
-            end
-        end
-    end
-
-    -- 5. Настройка аксессуаров
+    -- 4. Настройка аксессуаров
     if data.Accessories then
         local function toCFrame(cfData)
             if not cfData then return CFrame.new() end
@@ -544,7 +434,20 @@ _G.ApplySkin = function(skinName)
             mesh.TextureId = accData.TextureId
             mesh.Scale = accData.Scale or Vector3.new(1, 1, 1)
             
-            local targetPart = char:FindFirstChild(accData.ParentPart or "Head")
+            local targetName = accData.ParentPart or "Head"
+            
+            -- Авто-адаптация имен частей тела под R15
+            if isR15 then
+                if targetName == "Torso" then targetName = "UpperTorso"
+                elseif targetName == "Left Arm" then targetName = "LeftUpperArm"
+                elseif targetName == "Right Arm" then targetName = "RightUpperArm"
+                elseif targetName == "Left Leg" then targetName = "LeftUpperLeg"
+                elseif targetName == "Right Leg" then targetName = "RightUpperLeg"
+                end
+            end
+
+            local targetPart = char:FindFirstChild(targetName)
+            
             if targetPart then
                 local weld = Instance.new("Weld", handle)
                 weld.Name = "AccessoryWeld"
@@ -553,6 +456,8 @@ _G.ApplySkin = function(skinName)
                 weld.C0 = toCFrame(accData.C0)
                 weld.C1 = toCFrame(accData.C1)
                 acc.Parent = char
+            else
+                warn("Ошибка: Часть тела " .. tostring(targetName) .. " не найдена для " .. accData.Name)
             end
         end
     end
