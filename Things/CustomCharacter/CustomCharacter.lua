@@ -31,7 +31,7 @@ _G.Skins = {
             }
         }
     },
-    ["Skin2test"] = {
+    ["Cool Black Eboy"] = {
         Headless = true,
         Korblox = true,
         BodyColors = {
@@ -136,12 +136,69 @@ _G.Skins = {
             },
         }
     },
-    ["GigaChad"] = {
+    ["Rick Black/White eboy"] = {
         Headless = false,
         Korblox = false,
         BodyColors = {
-            HeadColor3 = Color3.fromRGB(163, 162, 165),
-            TorsoColor3 = Color3.fromRGB(163, 162, 165),
+            HeadColor3 = Color3.fromRGB(253, 255, 218),
+            TorsoColor3 = Color3.fromRGB(253, 255, 218),
+            LeftArmColor3 = Color3.fromRGB(253, 255, 218),
+            LeftLegColor3 = Color3.fromRGB(253, 255, 218),
+            RightArmColor3 = Color3.fromRGB(253, 255, 218),
+            RightLegColor3 = Color3.fromRGB(253, 255, 218),
+            
+        },
+        Shirt = "http://www.roblox.com/asset/?id=9195449962",
+        Pants = "http://www.roblox.com/asset/?id=6930028736",
+        Accessories = {
+            {
+                Name = "1",
+                MeshId = "rbxassetid://14540578692",
+                TextureId = "rbxassetid://14540576906",
+                ParentPart = "Head",
+                C0 = CFrame.new(0.0174255371, 0.216400146, -0.0615539551, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "2",
+                MeshId = "rbxassetid://139340584178768",
+                TextureId = "rbxassetid://129480931135684",
+                ParentPart = "Head",
+                C0 = CFrame.new(0.018773092, -0.200564086, 0.500219405, -1, 0, 0, 0, 1, 0, 0, 0, -1),
+                C1 = CFrame.new(0, 0, -0.5, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "3",
+                MeshId = "rbxassetid://118959861022187",
+                TextureId = "rbxassetid://83546633555844",
+                ParentPart = "Torso",
+                C0 = CFrame.new(0.061958313, 0.0527453423, 0.71781826, -1, 0, 0, 0, 1, 0, 0, 0, -1),
+                C1 = CFrame.new(0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "4",
+                MeshId = "rbxassetid://14390081008",
+                TextureId = "rbxassetid://14389890877",
+                ParentPart = "Head",
+                C0 = CFrame.new(-2.47077111e-07, 0.319997787, 0.0249103606, -1, 0, 0, 0, 1, 0, 0, 0, -1),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "5",
+                MeshId = "rbxassetid://13812255514",
+                TextureId = "rbxassetid://13812064017",
+                ParentPart = "Head",
+                C0 = CFrame.new(0.0282440186, 0.48028326, -0.13414669, 1, 0, 0, 0, 1, 0, 0, 0, 1),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
+            {
+                Name = "6",
+                MeshId = "http://www.roblox.com/asset/?id=1365696",
+                TextureId = "http://www.roblox.com/asset/?id=124896442",
+                ParentPart = "Head",
+                C0 = CFrame.new(8.65838956e-09, -0.243375838, -0.265762806, 1, -0, 0, 0, 0.966936111, 0.2550188, -0, -0.2550188, 0.966936111),
+                C1 = CFrame.new(0, 0.600000024, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1)
+            },
         }
     }
 }
