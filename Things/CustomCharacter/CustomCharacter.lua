@@ -9,14 +9,14 @@ end
 _G.OriginalAppearance = nil
 _G.Skins = {
     ["Skin1test"] = {
-        Headless = true,
+        Headless = false, -- false, так как мы ставим свою голову
+        CustomHead = {
+            MeshId = "rbxassetid://129985527653392",
+            TextureId = "rbxassetid://140448396622170", -- если текстуры нет, оставь ""
+        },
         Korblox = true,
         BodyColors = {
             HeadColor3 = Color3.fromRGB(253, 255, 218),
-            LeftArmColor3 = Color3.fromRGB(253, 255, 218),
-            RightArmColor3 = Color3.fromRGB(253, 255, 218),
-            LeftLegColor3 = Color3.fromRGB(253, 255, 218),
-            RightLegColor3 = Color3.fromRGB(253, 255, 218),
             TorsoColor3 = Color3.fromRGB(253, 255, 218),
         },
         Shirt = "http://www.roblox.com/asset/?id=130279969081496",
@@ -57,8 +57,10 @@ _G.SaveOriginal = function()
             table.insert(_G.OriginalAppearance, obj:Clone())
         end
     end
-    if char:FindFirstChild("Head") and char.Head:FindFirstChild("Mesh") then
-        _G.OriginalAppearance.HeadMesh = char.Head.Mesh:Clone()
+    -- Сохраняем меш головы (SpecialMesh или Mesh)
+    if char:FindFirstChild("Head") then
+        local m = char.Head:FindFirstChildOfClass("SpecialMesh") or char.Head:FindFirstChild("Mesh")
+        if m then _G.OriginalAppearance.HeadMesh = m:Clone() end
     end
 end
 
@@ -69,31 +71,34 @@ local function clearCharacter()
             obj:Destroy()
         end
     end
+    -- Чистим голову от старых мешей и лица
+    if char:FindFirstChild("Head") then
+        for _, hObj in ipairs(char.Head:GetChildren()) do
+            if hObj:IsA("SpecialMesh") or hObj:IsA("CharacterMesh") or hObj.Name == "Mesh" then
+                hObj:Destroy()
+            end
+        end
+        local face = char.Head:FindFirstChild("face")
+        if face then face.Transparency = 1 end -- Прячем стандартное лицо
+    end
 end
 
 _G.ApplySkin = function(skinName)
-    -- ПРОВЕРКА: Если скин не выбран (None) или база еще грузится, ничего не делаем
     if not skinName or skinName == "None" or skinName == "Загрузка..." or skinName == "" then 
         return 
     end
     
     local data = _G.Skins[skinName]
-    
-    -- Если такого скина нет в базе данных, тоже выходим, не раздевая персонажа
     if not data then 
-        warn("Скин '" .. tostring(skinName) .. "' не найден в базе данных!")
+        warn("Скин '" .. tostring(skinName) .. "' не найден!")
         return 
     end
     
     local char = getChar()
-    
-    -- Сохраняем твой оригинальный вид ТОЛЬКО один раз (при самом первом переодевании)
     _G.SaveOriginal()
-    
-    -- Теперь, когда мы уверены, что скин существует, очищаем персонажа
     clearCharacter()
 
-    -- Применяем цвета тела
+    -- Тело
     local bc = Instance.new("BodyColors", char)
     if data.BodyColors then
         for prop, color in pairs(data.BodyColors) do
@@ -101,32 +106,37 @@ _G.ApplySkin = function(skinName)
         end
     end
 
-    -- Применяем одежду
-    if data.Shirt then
-        local s = Instance.new("Shirt", char)
-        s.ShirtTemplate = data.Shirt
-    end
-    if data.Pants then
-        local p = Instance.new("Pants", char)
-        p.PantsTemplate = data.Pants
-    end
+    -- Одежда
+    if data.Shirt then Instance.new("Shirt", char).ShirtTemplate = data.Shirt end
+    if data.Pants then Instance.new("Pants", char).PantsTemplate = data.Pants end
 
-    -- Настройка головы (Headless)
-    if char:FindFirstChild("Head") and char.Head:FindFirstChild("Mesh") then
+    -- ЛОГИКА ГОЛОВЫ
+    if char:FindFirstChild("Head") then
+        local head = char.Head
+        
         if data.Headless then
-            char.Head.Mesh.MeshId = "http://www.roblox.com/asset/?id=134079402"
-            char.Head.Mesh.TextureId = "http://www.roblox.com/asset/?id=133940918"
+            local m = Instance.new("SpecialMesh", head)
+            m.MeshId = "http://www.roblox.com/asset/?id=134079402"
+            m.TextureId = "http://www.roblox.com/asset/?id=133940918"
+        elseif data.CustomHead then
+            -- Создаем новую голову по твоим параметрам
+            local m = Instance.new("SpecialMesh", head)
+            m.Name = "Mesh"
+            m.MeshId = data.CustomHead.MeshId
+            m.TextureId = data.CustomHead.TextureId or ""
+            m.Scale = Vector3.new(1, 1, 1)
+            m.Offset = Vector3.new(0, 0, 0)
         end
     end
 
-    -- Применяем Korblox (Правую ногу)
+    -- Ноги (Korblox)
     if data.Korblox then
         local mesh = Instance.new("CharacterMesh", char)
         mesh.BodyPart = Enum.BodyPart.RightLeg
         mesh.MeshId = 101851696
     end
 
-    -- Добавляем аксессуары
+    -- Аксессуары
     if data.Accessories then
         for _, accData in ipairs(data.Accessories) do
             local acc = Instance.new("Accessory")
@@ -141,7 +151,6 @@ _G.ApplySkin = function(skinName)
             mesh.TextureId = accData.TextureId
             
             local weld = Instance.new("Weld", handle)
-            weld.Name = "AccessoryWeld"
             weld.Part0 = handle
             weld.Part1 = char:FindFirstChild("Head")
             weld.C0 = accData.C0
@@ -161,9 +170,13 @@ _G.RestoreOriginal = function()
                 obj:Clone().Parent = char
             end
         end
-        if _G.OriginalAppearance.HeadMesh and char:FindFirstChild("Head") then
-            if char.Head:FindFirstChild("Mesh") then char.Head.Mesh:Destroy() end
-            _G.OriginalAppearance.HeadMesh:Clone().Parent = char.Head
+        -- Возвращаем родную голову и лицо
+        if char:FindFirstChild("Head") then
+            if _G.OriginalAppearance.HeadMesh then
+                _G.OriginalAppearance.HeadMesh:Clone().Parent = char.Head
+            end
+            local face = char.Head:FindFirstChild("face")
+            if face then face.Transparency = 0 end
         end
     end
 end
