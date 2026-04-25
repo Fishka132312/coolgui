@@ -156,34 +156,86 @@ end
 _G.IsSkinActive = false -- По умолчанию выключен
 
 _G.SaveOriginal = function()
-    if _G.IsSkinActive then return end 
+    if _G.IsSkinActive or _G.OriginalAppearance ~= nil then return end 
 
     local char = getChar()
-    -- Создаем структуру: Items для объектов, Data для свойств
     _G.OriginalAppearance = {
-        Items = {}, 
-        Data = {}
+        Items = {}, -- Тут будут ID шмоток
+        BodyColors = nil,
+        Face = nil,
+        HeadMesh = nil
     }
     
-    -- 1. Сохраняем объекты (одежда, аксессуары)
+    -- Сохраняем цвета тела
+    local bc = char:FindFirstChildOfClass("BodyColors")
+    if bc then
+        _G.OriginalAppearance.BodyColors = bc:Clone()
+    end
+
+    -- Сохраняем ID одежды и аксессуары
     for _, obj in ipairs(char:GetChildren()) do
-        if obj:IsA("Accessory") or obj:IsA("Shirt") or obj:IsA("Pants") or obj:IsA("BodyColors") or obj:IsA("CharacterMesh") then
-            table.insert(_G.OriginalAppearance.Items, obj:Clone())
+        if obj:IsA("Shirt") then
+            _G.OriginalAppearance.Shirt = obj.ShirtTemplate
+        elseif obj:IsA("Pants") then
+            _G.OriginalAppearance.Pants = obj.PantsTemplate
+        elseif obj:IsA("Accessory") then
+            -- Для аксессуаров всё же сохраним клон, но уберем его в спец. хранилище
+            local clone = obj:Clone()
+            table.insert(_G.OriginalAppearance.Items, clone)
         end
     end
 
-    -- 2. Сохраняем меш головы и лицо отдельно в Data
+    -- Голова
     if char:FindFirstChild("Head") then
         local m = char.Head:FindFirstChildOfClass("SpecialMesh") or char.Head:FindFirstChild("Mesh")
-        if m then 
-            _G.OriginalAppearance.Data.HeadMesh = m:Clone() 
-        end
+        if m then _G.OriginalAppearance.HeadMesh = m:Clone() end
         
         local face = char.Head:FindFirstChild("face")
-        if face then
-            _G.OriginalAppearance.Data.FaceTexture = face.Texture
+        if face then _G.OriginalAppearance.Face = face.Texture end
+    end
+end
+
+_G.RestoreOriginal = function()
+    local char = getChar()
+    _G.IsSkinActive = false 
+    
+    clearCharacter() 
+    
+    if _G.OriginalAppearance then
+        -- 1. Возвращаем цвета
+        if _G.OriginalAppearance.BodyColors then
+            _G.OriginalAppearance.BodyColors.Parent = char
+        end
+        
+        -- 2. Возвращаем одежду
+        if _G.OriginalAppearance.Shirt then
+            local s = Instance.new("Shirt", char)
+            s.ShirtTemplate = _G.OriginalAppearance.Shirt
+        end
+        if _G.OriginalAppearance.Pants then
+            local p = Instance.new("Pants", char)
+            p.PantsTemplate = _G.OriginalAppearance.Pants
+        end
+
+        -- 3. Возвращаем аксессуары
+        for _, acc in ipairs(_G.OriginalAppearance.Items) do
+            acc.Parent = char
+        end
+        
+        -- 4. Возвращаем лицо и голову
+        if char:FindFirstChild("Head") then
+            if _G.OriginalAppearance.HeadMesh then
+                _G.OriginalAppearance.HeadMesh.Parent = char.Head
+            end
+            local face = char.Head:FindFirstChild("face")
+            if face then
+                face.Transparency = 0
+                face.Texture = _G.OriginalAppearance.Face or ""
+            end
         end
     end
+    
+    _G.OriginalAppearance = nil 
 end
 
 local function clearCharacter()
