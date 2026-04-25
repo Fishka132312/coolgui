@@ -91,9 +91,9 @@ local selectedSkin = "None"
 
 -- 1. Дропдаун выбора скина
 local SkinSelector = Tab:AddDropdown({
-    Name = "Выберите скин",
+    Name = "Choose skin",
     Default = "None",
-    Options = {"Загрузка..."},
+    Options = {"Loading..."},
     Callback = function(Value)
         selectedSkin = Value
         
@@ -124,7 +124,7 @@ end)
 
 -- Переключатель (Toggle)
 Tab:AddToggle({
-    Name = "Активировать скин",
+    Name = "Change skin",
     Default = false,
     Callback = function(Value)
         -- Используем ту же переменную, что и в базе данных
