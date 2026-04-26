@@ -42,6 +42,13 @@ local Section = Tab:AddSection({
 })
 
 Tab:AddButton({
+	Name = "Meowl Shaders",
+	Callback = function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/coolgui/refs/heads/main/Things/Shaders/MeowlShaders.lua'))()  
+  	end    
+})
+
+Tab:AddButton({
 	Name = "Shaders",
 	Callback = function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/coolgui/refs/heads/main/Things/shaders.lua'))()  
