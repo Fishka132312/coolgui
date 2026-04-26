@@ -188,10 +188,6 @@ _G.Skins = {
             MeshId = "rbxassetid://115355460861394",
             TextureId = "rbxassetid://76689256681394",
         },
-        CustomHeadR15 = {
-        MeshId = "rbxassetid://105675926705465",
-        TextureId = "rbxassetid://76689256681394",
-    },
         R6BodyMeshes = {
         ["LeftArm"]  = { MeshId = 83001137 },
         ["RightArm"] = { MeshId = 83001181 },
@@ -338,76 +334,46 @@ end
 local function clearCharacter()
     local char = getChar()
     if not char then return end
-    local humanoid = char:FindFirstChildOfClass("Humanoid")
-    local isR15 = humanoid and humanoid.RigType == Enum.HumanoidRigType.R15
 
-    -- 1. Удаляем аксессуары, одежду и старые BodyColors
+    -- 1. Массовое удаление элементов одежды и мешей тела
     for _, obj in ipairs(char:GetChildren()) do
         if obj:IsA("Accessory") or 
            obj:IsA("Shirt") or 
            obj:IsA("Pants") or 
+           obj:IsA("BodyColors") or 
            obj:IsA("CharacterMesh") or 
-           obj:IsA("BodyColors") or -- Чистим старые цвета, чтобы новые легли ровно
-           obj:IsA("ShirtGraphic") then
+           obj:IsA("ShirtGraphic") then -- Удаляет T-Shirts (наклейки)
             obj:Destroy()
         end
     end
     
-    -- 2. Чистка головы
+    -- 2. Глубокая очистка головы
     local head = char:FindFirstChild("Head")
     if head then
-        head.Transparency = 0 
-        head.Material = Enum.Material.Plastic -- Сброс материала головы
-
-        -- Для R15 сбрасываем голову через описание (чтобы убрать кастомные формы)
-        if isR15 then
-            local hd = Instance.new("HumanoidDescription")
-            hd.Head = 0 
-            pcall(function() humanoid:ApplyDescription(hd) end)
-        end
-
-        -- Работа с объектами внутри головы
-        local face = head:FindFirstChild("face")
-        if not face then
-            face = Instance.new("Decal", head)
-            face.Name = "face"
-        end
-        face.Transparency = 0
-        face.Texture = "rbxassetid://76689256681394" -- Твое дефолтное лицо
-
         for _, hObj in ipairs(head:GetChildren()) do
-            -- Удаляем только лишние меши, не трогая основной Mesh в R6 если он нужен
-            if hObj.Name == "HeadlessMesh" or (hObj:IsA("SpecialMesh") and hObj.Name ~= "Mesh") then
+            -- Удаляем все меши (стандартные и кастомные) и декали (лицо)
+            -- Проверка hObj:IsA("Decal") важна, если мы хотим полностью сбросить лицо
+            if hObj:IsA("SpecialMesh") or hObj:IsA("MeshPart") or hObj.Name == "Mesh" then
                 hObj:Destroy()
             end
-        end
-        
-        -- Возвращаем стандартную форму головы для R6, если меша нет
-        if not isR15 and not head:FindFirstChildOfClass("SpecialMesh") then
-            local m = Instance.new("SpecialMesh", head)
-            m.Scale = Vector3.new(1.25, 1.25, 1.25)
+            
+            -- Скрываем или удаляем лицо (face)
+            if hObj:IsA("Decal") and hObj.Name == "face" then
+                -- Если скин активен — удаляем или скрываем лицо
+                if _G.IsSkinActive then
+                    hObj.Transparency = 1
+                else
+                    hObj.Transparency = 0 -- Возвращаем видимость для оригинала
+                end
+            end
         end
     end
     
-    -- 3. Чистка мешей конечностей и ФИКС СЕРОГО ТОРСА
+    -- Дополнительная страховка: иногда меши R6 создают вложения внутри частей тела
     for _, part in ipairs(char:GetChildren()) do
         if part:IsA("BasePart") then
-            part.Transparency = 0
-            part.Material = Enum.Material.Plastic -- ГЛАВНЫЙ ФИКС: убирает серый блеск/текстуру пакетов
-            
-            -- Если это не голова, проверяем меши
-            if part.Name ~= "Head" then
-                for _, m in ipairs(part:GetChildren()) do
-                    if m:IsA("SpecialMesh") or m:IsA("CharacterMesh") then
-                        -- В R6 торсе меш лучше оставить пустым, иначе будет квадратный блок
-                        if part.Name == "Torso" then
-                            if m:IsA("SpecialMesh") then m.MeshId = "" end
-                        else
-                            m:Destroy()
-                        end
-                    end
-                end
-            end
+            local m = part:FindFirstChildOfClass("SpecialMesh")
+            if m then m:Destroy() end
         end
     end
 end
@@ -456,13 +422,13 @@ _G.ApplySkin = function(skinName)
     
     -- 2. Глубокая очистка персонажа перед наложением нового скина
     clearCharacter()
-    task.wait(0.1) 
+    task.wait(0.1) -- Даем Roblox время физически удалить объекты
 
-    -- ФИКС СЕРОГО ТОРСА: Сбрасываем материал всех частей на Plastic
-    for _, p in ipairs(char:GetChildren()) do
-        if p:IsA("BasePart") then
-            p.Material = Enum.Material.Plastic
-            p.Color = Color3.new(1, 1, 1) -- Сброс перед наложением BodyColors
+    -- 3. Настройка цветов тела
+    local bc = Instance.new("BodyColors", char)
+    if data.BodyColors then
+        for prop, color in pairs(data.BodyColors) do
+            pcall(function() bc[prop] = color end)
         end
     end
 
@@ -501,50 +467,30 @@ _G.ApplySkin = function(skinName)
         p.PantsTemplate = data.Pants 
     end
 
-  -- 6. Настройка головы (Headless или Custom)
+    -- 6. Настройка головы (Headless или Custom)
     if char:FindFirstChild("Head") then
         local head = char.Head
         
-        -- Ждем и находим/создаем лицо
+        -- Убираем лицо, если активен скин
         local face = head:FindFirstChild("face")
-        if not face then
-            face = Instance.new("Decal", head)
-            face.Name = "face"
-        end
-        
-        head.Transparency = 0
-        
-        -- Если R15, сбрасываем меш головы (чтобы лицо работало)
-        if isR15 then
-            local meshId = 0
-            if data.CustomHeadR15 and data.CustomHeadR15.MeshId then
-                meshId = tonumber(tostring(data.CustomHeadR15.MeshId):match("%d+"))
-            end
-            
-            local hd = Instance.new("HumanoidDescription")
-            hd.Head = meshId or 0
-            pcall(function() humanoid:ApplyDescription(hd) end)
-            task.wait(0.1)
-        end
+        if face then face.Transparency = 1 end
 
-        -- Установка текстуры лица
         if data.Headless then
-            head.Transparency = 1
-            face.Transparency = 1
-        else
-            face.Transparency = 0
-            local currentData = (isR15 and data.CustomHeadR15) or data.CustomHead
-            
-            if currentData and currentData.TextureId then
-                -- Вырезаем цифры из ID, если там ссылка
-                local texId = tostring(currentData.TextureId):match("%d+")
-                face.Texture = "rbxassetid://" .. (texId or "")
-            else
-                -- Дефолтное лицо из твоего списка
-                face.Texture = "rbxassetid://76689256681394"
-            end
+            local m = Instance.new("SpecialMesh", head)
+            m.Name = "HeadlessMesh"
+            m.MeshId = "http://www.roblox.com/asset/?id=134079402"
+            m.TextureId = "http://www.roblox.com/asset/?id=133940918"
+            m.Scale = Vector3.new(0, 0, 0)
+        elseif data.CustomHead then
+            local m = Instance.new("SpecialMesh", head)
+            m.Name = "Mesh"
+            m.MeshId = data.CustomHead.MeshId
+            m.TextureId = data.CustomHead.TextureId or ""
+            m.Scale = data.CustomHead.Scale or Vector3.new(1, 1, 1)
+            m.Offset = data.CustomHead.Offset or Vector3.new(0, 0, 0)
         end
     end
+
     -- 7. Настройка аксессуаров
     if data.Accessories then
         local function toCFrame(cfData)
