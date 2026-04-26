@@ -119,8 +119,15 @@ LoadConfig()
 
 local function UpdateWorld()
     EnsureEffects()
+
+    if Config.techFuture then
+    Lighting.Technology = Enum.Technology.Future
+else
+    Lighting.Technology = Enum.Technology.Compatibility
+end
     
     Lighting.ExposureCompensation = Config.exposure
+    Lighting.ClockTime = Config.clockTime or 14
     local amb = math.clamp(Config.outdoorAmbient, 0, 255)
     Lighting.OutdoorAmbient = Color3.fromRGB(amb, amb, math.min(amb + 10, 255))
     
@@ -135,8 +142,8 @@ local function UpdateWorld()
     
     dof.Enabled = Config.smartDof
     if dof.Enabled then
-        dof.InFocusRadius = 20
-        dof.NearIntensity = 0
+        dof.InFocusRadius = 60
+        dof.NearIntensity = 0.05
     end
 end
 
@@ -170,6 +177,22 @@ getgenv().ShaderThreads["UpdateLoop"] = RunService.Heartbeat:Connect(function()
         dof.Enabled = false
     end
 end)
+
+local function applySky(ids)
+    for _, obj in pairs(Lighting:GetChildren()) do
+        if obj:IsA("Sky") then obj:Destroy() end
+    end
+    local newSky = Instance.new("Sky")
+    newSky.SkyboxBk = "rbxassetid://" .. (ids.Bk or ids.all)
+    newSky.SkyboxDn = "rbxassetid://" .. (ids.Dn or ids.all)
+    newSky.SkyboxFt = "rbxassetid://" .. (ids.Ft or ids.all)
+    newSky.SkyboxLf = "rbxassetid://" .. (ids.Lf or ids.all)
+    newSky.SkyboxRt = "rbxassetid://" .. (ids.Rt or ids.all)
+    newSky.SkyboxUp = "rbxassetid://" .. (ids.Up or ids.all)
+    newSky.SunTextureId = "" -- Убираем стандартное солнце, чтобы не мешало кастомному небу
+    newSky.MoonTextureId = ""
+    newSky.Parent = Lighting
+end
 
 local oldGui = PlayerGui:FindFirstChild("UltraShaders_Ultimate")
 if oldGui then
@@ -230,7 +253,7 @@ local container = Instance.new("ScrollingFrame")
 container.Size = UDim2.new(1, -20, 1, -70)
 container.Position = UDim2.new(0, 10, 0, 60)
 container.BackgroundTransparency = 1
-container.CanvasSize = UDim2.new(0, 0, 0, 1100)
+container.CanvasSize = UDim2.new(0, 0, 0, 1300)
 container.ScrollBarThickness = 4
 container.Visible = not Config.guiMinimized
 container.Parent = frame
@@ -250,6 +273,14 @@ minBtn.MouseButton1Click:Connect(function()
         minBtn.Text = "−"
     end
 end)
+
+local SkyPresets = {
+    ["🌌 Space Sky"] = {Bk="15983968922", Dn="15983966825", Ft="15983965025", Lf="15983967420", Rt="15983966246", Up="15983964246"},
+    ["⭐ Starry Night"] = {Bk="154184972", Dn="154184960", Ft="154185021", Lf="154184943", Rt="154185004", Up="154185031"},
+    ["🟥 Scary Red"] = {Bk="108929045660200", Dn="78646480540009", Ft="90546017435179", Lf="109838453114563", Rt="94190734796082", Up="126944775797063"},
+    ["🎴 Aesthetic"] = {Bk="81858382098344", Dn="138472117789684", Ft="95687237979398", Lf="84924000207295", Rt="99961685452126", Up="104038404823203"},
+    ["🌌 Galaxy Nebula"] = {Bk="159454299", Dn="159454296", Ft="159454293", Lf="159454286", Rt="159454300", Up="159454288"}
+}
 
 local function createSlider(name, configKey, min, max)
     local base = Instance.new("Frame")
@@ -333,7 +364,7 @@ local function createToggle(name, configKey)
     btn.MouseButton1Click:Connect(function()
         Config[configKey] = not Config[configKey]
         btn.BackgroundColor3 = Config[configKey] and Color3.fromRGB(40, 180, 100) or Color3.fromRGB(50, 50, 55)
-        btn.Text = name .. ": " .. (Config[configKey] and "ВКЛ" or "ВЫКЛ")
+        btn.Text = name .. ": " .. (Config[configKey] and "ON" or "OFF")
         UpdateWorld()
         SaveConfig()
     end)
@@ -548,6 +579,27 @@ createSlider("SunRaysIntensity", "sunRaysIntensity", 0, 1)
 createSlider("AtmoDensity", "atmoDensity", 0, 1)
 createSlider("AtmoHaze", "atmoHaze", 0, 3)
 
+-- Разделитель (визуально)
+local line = Instance.new("Frame")
+line.Size = UDim2.new(1, -10, 0, 2)
+line.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
+line.Parent = container
+
+-- Слайдер времени суток
+-- Сначала добавим ClockTime в конфиг (в начало скрипта в таблицу Config добавь clockTime = 14)
+Config.clockTime = Lighting.ClockTime
+createSlider("Time of Day", "clockTime", 0, 24)
+
+-- Чтобы время обновлялось, добавь в функцию UpdateWorld:
+-- Lighting.ClockTime = Config.clockTime
+
+-- Выпадающий список небес
+local skyNames = {}
+for name, _ in pairs(SkyPresets) do table.insert(skyNames, name) end
+createDropdown("Select Skybox", skyNames, function(selected)
+    applySky(SkyPresets[selected])
+end)
+
 local saveUserBtn = Instance.new("TextButton")
 saveUserBtn.Size = UDim2.new(1, -10, 0, 45)
 saveUserBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
@@ -601,8 +653,8 @@ getgenv().ShaderThreads["DofLoop"] = RunService.Heartbeat:Connect(function()
             local result = workspace:Raycast(Camera.CFrame.Position, Camera.CFrame.LookVector * 500, rayParams)
             local dist = result and (Camera.CFrame.Position - result.Position).Magnitude or 500
             
-            dof.FocusDistance = dof.FocusDistance + (dist - dof.FocusDistance) * 0.1
-            local targetFar = (dist > 100) and 0.15 or 0.4
+            dof.FocusDistance = dof.FocusDistance + (dist - dof.FocusDistance) * 0.02
+            local targetFar = (dist > 100) and 0.05 or 0.12
             dof.FarIntensity = dof.FarIntensity + (targetFar - dof.FarIntensity) * 0.05
             dof.Enabled = true
         end
