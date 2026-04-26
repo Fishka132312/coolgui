@@ -145,7 +145,7 @@ local Tab = Window:MakeTab({
 })
 
 local Section = Tab:AddSection({
-	Name = "Supported Games: Petsim99, Evade, BENPCORDIE "
+	Name = "Supported Games: Petsim99, Evade, BeNpcOrDie, StealAPet, PunchSim, FnafPizzaParty"
 })
 
 Tab:AddButton({
