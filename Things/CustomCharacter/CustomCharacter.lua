@@ -341,12 +341,13 @@ local function clearCharacter()
     local humanoid = char:FindFirstChildOfClass("Humanoid")
     local isR15 = humanoid and humanoid.RigType == Enum.HumanoidRigType.R15
 
-    -- 1. Удаляем аксессуары и одежду, но НЕ трогаем BodyColors здесь (заменим позже)
+    -- 1. Удаляем аксессуары, одежду и старые BodyColors
     for _, obj in ipairs(char:GetChildren()) do
         if obj:IsA("Accessory") or 
            obj:IsA("Shirt") or 
            obj:IsA("Pants") or 
            obj:IsA("CharacterMesh") or 
+           obj:IsA("BodyColors") or -- Чистим старые цвета, чтобы новые легли ровно
            obj:IsA("ShirtGraphic") then
             obj:Destroy()
         end
@@ -356,42 +357,54 @@ local function clearCharacter()
     local head = char:FindFirstChild("Head")
     if head then
         head.Transparency = 0 
-        -- Для R15 сбрасываем голову через описание
+        head.Material = Enum.Material.Plastic -- Сброс материала головы
+
+        -- Для R15 сбрасываем голову через описание (чтобы убрать кастомные формы)
         if isR15 then
             local hd = Instance.new("HumanoidDescription")
             hd.Head = 0 
             pcall(function() humanoid:ApplyDescription(hd) end)
         end
 
+        -- Работа с объектами внутри головы
+        local face = head:FindFirstChild("face")
+        if not face then
+            face = Instance.new("Decal", head)
+            face.Name = "face"
+        end
+        face.Transparency = 0
+        face.Texture = "rbxassetid://76689256681394" -- Твое дефолтное лицо
+
         for _, hObj in ipairs(head:GetChildren()) do
+            -- Удаляем только лишние меши, не трогая основной Mesh в R6 если он нужен
             if hObj.Name == "HeadlessMesh" or (hObj:IsA("SpecialMesh") and hObj.Name ~= "Mesh") then
                 hObj:Destroy()
             end
-            
-            if hObj:IsA("Decal") and hObj.Name == "face" then
-                hObj.Transparency = 0
-                hObj.Texture = "rbxassetid://76689256681394" 
-            end
         end
         
-        -- Возвращаем форму головы для R6
+        -- Возвращаем стандартную форму головы для R6, если меша нет
         if not isR15 and not head:FindFirstChildOfClass("SpecialMesh") then
             local m = Instance.new("SpecialMesh", head)
             m.Scale = Vector3.new(1.25, 1.25, 1.25)
         end
     end
     
-    -- 3. Чистка мешей конечностей (Чтобы не было серых блоков)
+    -- 3. Чистка мешей конечностей и ФИКС СЕРОГО ТОРСА
     for _, part in ipairs(char:GetChildren()) do
         if part:IsA("BasePart") then
             part.Transparency = 0
-            -- В R6 не удаляем SpecialMesh полностью из Торса, а просто чистим ID
-            for _, m in ipairs(part:GetChildren()) do
-                if m:IsA("SpecialMesh") then
-                    if part.Name == "Torso" then
-                        m.MeshId = "" 
-                    else
-                        m:Destroy()
+            part.Material = Enum.Material.Plastic -- ГЛАВНЫЙ ФИКС: убирает серый блеск/текстуру пакетов
+            
+            -- Если это не голова, проверяем меши
+            if part.Name ~= "Head" then
+                for _, m in ipairs(part:GetChildren()) do
+                    if m:IsA("SpecialMesh") or m:IsA("CharacterMesh") then
+                        -- В R6 торсе меш лучше оставить пустым, иначе будет квадратный блок
+                        if part.Name == "Torso" then
+                            if m:IsA("SpecialMesh") then m.MeshId = "" end
+                        else
+                            m:Destroy()
+                        end
                     end
                 end
             end
