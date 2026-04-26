@@ -58,7 +58,7 @@ Tab:AddButton({
 Tab:AddButton({
 	Name = "Cool Thing",
 	Callback = function()
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/coolgui/refs/heads/main/Things/coolthing.lua'))()  
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/Fishka132312/coolgui/refs/heads/main/Things/Shaders/coolthing.lua'))()  
   	end    
 })
 
@@ -76,7 +76,6 @@ local Section = Tab:AddSection({
 
 local selectedSkin = "None" 
 
--- 1. Выпадающий список (Dropdown)
 local SkinSelector = Tab:AddDropdown({
     Name = "Choose skin",
     Default = "None",
@@ -85,7 +84,6 @@ local SkinSelector = Tab:AddDropdown({
         selectedSkin = Value
         _G.CurrentSkinName = Value
         
-        -- Если тумблер уже включен, при смене названия в списке скин сразу меняется
         if _G.IsSkinActive and selectedSkin ~= "None" and selectedSkin ~= "Loading..." and selectedSkin ~= "Ошибка базы" then
             if _G.ApplySkin then
                 _G.ApplySkin(selectedSkin)
@@ -94,17 +92,14 @@ local SkinSelector = Tab:AddDropdown({
     end     
 })
 
--- 2. Поток загрузки имен скинов из базы
 task.spawn(function()
     local timeout = 0
-    -- Ждем, пока основная база (_G.SkinNames) прогрузится
     while (not _G.SkinNames or #_G.SkinNames == 0) and timeout < 10 do
         task.wait(0.5)
         timeout = timeout + 0.5
     end
 
     if _G.SkinNames and #_G.SkinNames > 0 then
-        -- Добавляем "None" в начало списка, чтобы можно было сбросить выбор
         local options = {"None"}
         for _, name in ipairs(_G.SkinNames) do
             table.insert(options, name)
@@ -115,7 +110,6 @@ task.spawn(function()
     end
 end)
 
--- 3. Переключатель (Toggle)
 Tab:AddToggle({
     Name = "Enable Skin Changer",
     Default = false,
@@ -123,19 +117,15 @@ Tab:AddToggle({
         _G.IsSkinActive = Value 
         
         if Value then
-            -- Проверка: выбран ли скин и не является ли он системной надписью
             if selectedSkin and selectedSkin ~= "None" and selectedSkin ~= "Loading..." and selectedSkin ~= "Error: No Skins Found" then
                 if _G.ApplySkin then
                     _G.ApplySkin(selectedSkin)
                 end
             else
-                -- Если скин не выбран, выключаем тумблер обратно (опционально)
                 warn("Скин не выбран!")
                 _G.IsSkinActive = false
-                -- Здесь можно добавить уведомление в консоль или UI, что нужно выбрать скин
             end
         else
-            -- Если выключили — возвращаем оригинал
             if _G.RestoreOriginal then
                 _G.RestoreOriginal()
             end
