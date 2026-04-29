@@ -189,7 +189,7 @@ local function applySky(ids)
     newSky.SkyboxLf = "rbxassetid://" .. (ids.Lf or ids.all)
     newSky.SkyboxRt = "rbxassetid://" .. (ids.Rt or ids.all)
     newSky.SkyboxUp = "rbxassetid://" .. (ids.Up or ids.all)
-    newSky.SunTextureId = "" -- Убираем стандартное солнце, чтобы не мешало кастомному небу
+    newSky.SunTextureId = ""
     newSky.MoonTextureId = ""
     newSky.Parent = Lighting
 end
@@ -279,7 +279,23 @@ local SkyPresets = {
     ["⭐ Starry Night"] = {Bk="154184972", Dn="154184960", Ft="154185021", Lf="154184943", Rt="154185004", Up="154185031"},
     ["🟥 Scary Red"] = {Bk="108929045660200", Dn="78646480540009", Ft="90546017435179", Lf="109838453114563", Rt="94190734796082", Up="126944775797063"},
     ["🎴 Aesthetic"] = {Bk="81858382098344", Dn="138472117789684", Ft="95687237979398", Lf="84924000207295", Rt="99961685452126", Up="104038404823203"},
-    ["🌌 Galaxy Nebula"] = {Bk="159454299", Dn="159454296", Ft="159454293", Lf="159454286", Rt="159454300", Up="159454288"}
+    ["🌌 Galaxy Nebula"] = {Bk="159454299", Dn="159454296", Ft="159454293", Lf="159454286", Rt="159454300", Up="159454288"},
+    ["🌷 Pink Sky"] = {Bk="12635309703", Dn="12635311686", Ft="12635312870", Lf="12635313718", Rt="12635315817", Up="12635316856"},
+    ["☁️ Cloody Sky"] = {Bk="4495864450", Dn="4495864887", Ft="4495865458", Lf="4495866035", Rt="4495866584", Up="4495867486"},
+    ["🌌 Space Sky 2"] = {Bk="11336725935", Dn="11336722286", Ft="11336720418", Lf="11336725016", Rt="11336726887", Up="11336723758"},
+    ["🌑 Night Sky"] = {Bk="12064107", Dn="12064152", Ft="12064121", Lf="12063984", Rt="12064115", Up="12064131"},
+    ["🌌 Space Sky 3"] = {Bk="16262356578", Dn="16262358026", Ft="16262360469", Lf="16262362003", Rt="16262363873", Up="16262366016"},
+    ["🌌 Space Sky 4"] = {Bk="14543264135", Dn="14543358958", Ft="14543257810", Lf="14543275895", Rt="14543280890", Up="14543371676"},
+    ["🎨 Vanilla Sky"] = {Bk="15470310980", Dn="15470308646", Ft="15470306877", Lf="15470312884", Rt="15470316058", Up="15470318949"},
+    ["🌳 Dark Forest Sky"] = {Bk="237593887", Dn="237593849", Ft="237593922", Lf="237593861", Rt="237593835", Up="237593929"},
+    ["😛 Anime Sky"] = {Bk="117817054028770", Dn="94226072593203", Ft="100770157159769", Lf="100770157159769", Rt="129599597136335", Up="100728050646623"},
+    ["🧱 Minecraf Sky"] = {Bk="119036375117529", Dn="84998812401", Ft="109507946512674", Lf="77236287225229", Rt="92034641677956", Up="89455832517253"},
+    ["🌌 Space Sky 5"] = {Bk="16876760844", Dn="16876762818", Ft="16876765234", Lf="16876767659", Rt="16876769447", Up="168"},
+    ["🌃 Aurora Sky"] = {Bk="126146408999925", Dn="118112392224589", Ft="121253817183621", Lf="134105463289425", Rt="89099449712918", Up="138429250948648"},
+    ["🌍 Earth Sky"] = {Bk="792487917", Dn="792489144", Ft="792488535", Lf="792488212", Rt="792487500", Up="792488816"},
+    ["🏳️‍🌈 Rainbow Sky"] = {Bk="12877085497", Dn="12877086914", Ft="12877085497", Lf="12877085497", Rt="12877085497", Up="12877083856"},
+    ["🌃 Aurora Sky 2"] = {Bk="1189339378", Dn="1189339378", Ft="1189339741", Lf="1189339550", Rt="1189339155", Up="1189340203"},
+    ["🏳️‍🌈 Rainbow Sky"] = {Bk="12877085497", Dn="12877086914", Ft="12877085497", Lf="12877085497", Rt="12877085497", Up="12877083856"},
 }
 
 local function createSlider(name, configKey, min, max)
@@ -579,21 +595,15 @@ createSlider("SunRaysIntensity", "sunRaysIntensity", 0, 1)
 createSlider("AtmoDensity", "atmoDensity", 0, 1)
 createSlider("AtmoHaze", "atmoHaze", 0, 3)
 
--- Разделитель (визуально)
 local line = Instance.new("Frame")
 line.Size = UDim2.new(1, -10, 0, 2)
 line.BackgroundColor3 = Color3.fromRGB(50, 50, 60)
 line.Parent = container
 
--- Слайдер времени суток
--- Сначала добавим ClockTime в конфиг (в начало скрипта в таблицу Config добавь clockTime = 14)
 Config.clockTime = Lighting.ClockTime
 createSlider("Time of Day", "clockTime", 0, 24)
 
--- Чтобы время обновлялось, добавь в функцию UpdateWorld:
--- Lighting.ClockTime = Config.clockTime
 
--- Выпадающий список небес
 local skyNames = {}
 for name, _ in pairs(SkyPresets) do table.insert(skyNames, name) end
 createDropdown("Select Skybox", skyNames, function(selected)
